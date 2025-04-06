@@ -75,6 +75,10 @@
         "message": "확장 프로그램",
         "description": "확장 프로그램 링크 제목"
     },
+    "bookmarksLinkTitle": {
+        "message": "북마크",
+        "description": "북마크 링크 제목"
+    },
     "settingsLinkTitle": {
         "message": "설정",
         "description": "설정 링크 제목"
@@ -684,6 +688,10 @@
     "showExtensionsLink": {
         "message": "확장 프로그램 표시",
         "description": "확장 프로그램 링크 표시 옵션"
+    },
+    "showBookmarksLink": {
+        "message": "Show Bookmarks",
+        "description": "Show bookmarks link option"
     },
     "searchTab": {
         "message": "검색",

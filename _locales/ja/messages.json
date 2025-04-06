@@ -75,6 +75,10 @@
         "message": "拡張機能",
         "description": "拡張機能リンクのタイトル"
     },
+    "bookmarksLinkTitle": {
+        "message": "ブックマーク",
+        "description": "ブックマークリンクのタイトル"
+    },
     "settingsLinkTitle": {
         "message": "設定",
         "description": "設定リンクのタイトル"
@@ -684,6 +688,10 @@
     "showExtensionsLink": {
         "message": "拡張機能を表示",
         "description": "拡張機能リンク表示オプション"
+    },
+    "showBookmarksLink": {
+        "message": "Show Bookmarks",
+        "description": "Show bookmarks link option"
     },
     "searchTab": {
         "message": "検索",

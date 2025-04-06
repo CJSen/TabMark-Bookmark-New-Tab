@@ -211,6 +211,10 @@
         "message": "Extensions",
         "description": "Extensions link title"
     },
+    "bookmarksLinkTitle": {
+        "message": "Bookmarks",
+        "description": "Bookmarks link title"
+    },
     "settingsLinkTitle": {
         "message": "Settings",
         "description": "Settings link title"
@@ -715,6 +719,10 @@
     "showExtensionsLink": {
         "message": "Show Extensions",
         "description": "Show extensions link option"
+    },
+    "showBookmarksLink": {
+        "message": "Show Bookmarks",
+        "description": "Show bookmarks link option"
     },
     "donateTab": {
         "message": "Donate",

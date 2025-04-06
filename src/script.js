@@ -854,7 +854,8 @@ document.addEventListener('DOMContentLoaded', function() {
       'showHistoryLink',
       'showDownloadsLink',
       'showPasswordsLink',
-      'showExtensionsLink'
+      'showExtensionsLink',
+      'showBookmarksLink'
     ],
     (result) => {
       // 应用搜索框显示设置 - 修改为默认隐藏
@@ -890,6 +891,7 @@ document.addEventListener('DOMContentLoaded', function() {
       toggleElementVisibility('#downloads-link', result.showDownloadsLink !== false);
       toggleElementVisibility('#passwords-link', result.showPasswordsLink !== false);
       toggleElementVisibility('#extensions-link', result.showExtensionsLink !== false);
+      toggleElementVisibility('#bookmarks-link', result.showBookmarksLink !== false);
 
       // 检查是否所有链接都被隐藏
       const linksContainer = document.querySelector('.links-icons');
@@ -898,7 +900,8 @@ document.addEventListener('DOMContentLoaded', function() {
           result.showHistoryLink === false &&
           result.showDownloadsLink === false &&
           result.showPasswordsLink === false &&
-          result.showExtensionsLink === false;
+          result.showExtensionsLink === false &&
+          result.showBookmarksLink === false;
 
         linksContainer.style.display = allLinksHidden ? 'none' : '';
       }
@@ -3608,6 +3611,9 @@ function setupSpecialLinks() {
           break;
         case '#extensions':
           chromeUrl = 'chrome://extensions';
+          break;
+        case '#bookmarks':
+          chromeUrl = 'chrome://bookmarks';
           break;
         case '#settings':
           openSettingsModal();

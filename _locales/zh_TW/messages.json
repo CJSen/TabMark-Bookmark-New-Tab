@@ -75,6 +75,10 @@
         "message": "擴充功能",
         "description": "擴充功能連結的標題"
     },
+    "bookmarksLinkTitle": {
+        "message": "書籤",
+        "description": "書籤連結的標題"
+    },
     "settingsLinkTitle": {
         "message": "設定",
         "description": "設定連結的標題"
@@ -643,7 +647,7 @@
         "message": "自訂書籤和界面的佈局顯示",
         "description": "佈局設定描述"
     },
-    "bookmarkWidthTitle": {     
+    "bookmarkWidthTitle": {
         "message": "書籤寬度設定",
         "description": "書籤寬度設定標題"
     },
@@ -689,7 +693,7 @@
         "message": "深色",
         "description": "深色主題選項"
     },
-    "autoTheme": {  
+    "autoTheme": {
         "message": "跟隨系統",
         "description": "跟隨系統主題選項"
     },
@@ -710,7 +714,7 @@
         "description": "顯示頁尾選項"
     },
     "quickAccessLinksTitle": {
-        "message": "快速訪問連結",      
+        "message": "快速訪問連結",
         "description": "快速訪問連結設定標題"
     },
     "showHistoryLink": {
@@ -728,6 +732,10 @@
     "showExtensionsLink": {
         "message": "顯示擴充程式連結",
         "description": "顯示擴充程式連結選項"
+    },
+    "showBookmarksLink": {
+        "message": "Show Bookmarks",
+        "description": "Show bookmarks link option"
     },
     "searchTab": {
         "message": "搜尋設定",

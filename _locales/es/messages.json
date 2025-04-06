@@ -211,6 +211,10 @@
         "message": "Extensiones",
         "description": "Título del enlace de extensiones"
     },
+    "bookmarksLinkTitle": {
+        "message": "Marcadores",
+        "description": "Título del enlace de marcadores"
+    },
     "settingsLinkTitle": {
         "message": "Configuraciones",
         "description": "Título del enlace de configuraciones"
@@ -608,6 +612,10 @@
     "showExtensionsLink": {
         "message": "Mostrar Extensiones",
         "description": "Opción para mostrar enlace de extensiones"
+    },
+    "showBookmarksLink": {
+        "message": "Show Bookmarks",
+        "description": "Show bookmarks link option"
     },
     "searchTab": {
         "message": "Búsqueda",

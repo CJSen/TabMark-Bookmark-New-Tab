@@ -701,6 +701,7 @@ class SettingsManager {
     this.showDownloadsLinkCheckbox = document.getElementById('show-downloads-link');
     this.showPasswordsLinkCheckbox = document.getElementById('show-passwords-link');
     this.showExtensionsLinkCheckbox = document.getElementById('show-extensions-link');
+    this.showBookmarksLinkCheckbox = document.getElementById('show-bookmarks-link');
 
     // 加载保存的设置
     chrome.storage.sync.get(
@@ -711,7 +712,8 @@ class SettingsManager {
         'showHistoryLink',
         'showDownloadsLink',
         'showPasswordsLink',
-        'showExtensionsLink'
+        'showExtensionsLink',
+        'showBookmarksLink'
       ],
       (result) => {
         // 设置复选框状态 - 修改搜索框的默认值为 false
@@ -724,12 +726,14 @@ class SettingsManager {
         this.showDownloadsLinkCheckbox.checked = result.showDownloadsLink !== false;
         this.showPasswordsLinkCheckbox.checked = result.showPasswordsLink !== false;
         this.showExtensionsLinkCheckbox.checked = result.showExtensionsLink !== false;
+        this.showBookmarksLinkCheckbox.checked = result.showBookmarksLink !== false;
 
         // 应用设置到界面
         this.toggleElementVisibility('#history-link', result.showHistoryLink !== false);
         this.toggleElementVisibility('#downloads-link', result.showDownloadsLink !== false);
         this.toggleElementVisibility('#passwords-link', result.showPasswordsLink !== false);
         this.toggleElementVisibility('#extensions-link', result.showExtensionsLink !== false);
+        this.toggleElementVisibility('#bookmarks-link', result.showBookmarksLink !== false);
 
         // 检查是否所有链接都被隐藏
         const linksContainer = document.querySelector('.links-icons');
@@ -738,7 +742,8 @@ class SettingsManager {
             result.showHistoryLink === false &&
             result.showDownloadsLink === false &&
             result.showPasswordsLink === false &&
-            result.showExtensionsLink === false;
+            result.showExtensionsLink === false &&
+            result.showBookmarksLink === false;
 
           linksContainer.style.display = allLinksHidden ? 'none' : '';
         }
@@ -807,6 +812,12 @@ class SettingsManager {
       const isVisible = this.showExtensionsLinkCheckbox.checked;
       chrome.storage.sync.set({ showExtensionsLink: isVisible });
       this.toggleElementVisibility('#extensions-link', isVisible);
+    });
+
+    this.showBookmarksLinkCheckbox.addEventListener('change', () => {
+      const isVisible = this.showBookmarksLinkCheckbox.checked;
+      chrome.storage.sync.set({ showBookmarksLink: isVisible });
+      this.toggleElementVisibility('#bookmarks-link', isVisible);
     });
   }
 

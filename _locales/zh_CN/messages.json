@@ -75,6 +75,10 @@
         "message": "扩展",
         "description": "扩展链接的标题"
     },
+    "bookmarksLinkTitle": {
+        "message": "书签",
+        "description": "书签链接的标题"
+    },
     "settingsLinkTitle": {
         "message": "设置",
         "description": "设置链接的标题"
@@ -270,6 +274,10 @@
     "extensionsLinkTitle": {
         "message": "扩展",
         "description": "扩展链接标题"
+    },
+    "bookmarksLinkTitle": {
+        "message": "书签",
+        "description": "书签链接标题"
     },
     "settingsLinkTitle": {
         "message": "设置",
@@ -767,6 +775,10 @@
     "showExtensionsLink": {
         "message": "显示扩展管理",
         "description": "显示扩展管理选项"
+    },
+    "showBookmarksLink": {
+        "message": "显示书签管理",
+        "description": "显示书签管理选项"
     },
     "searchTab": {
         "message": "搜索设置",

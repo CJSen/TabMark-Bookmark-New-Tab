@@ -75,6 +75,10 @@
         "message": "擴展",
         "description": "擴展鏈接的標題"
     },
+    "bookmarksLinkTitle": {
+        "message": "書籤",
+        "description": "書籤鏈接的標題"
+    },
     "settingsLinkTitle": {
         "message": "設置",
         "description": "設置鏈接的標題"
@@ -736,6 +740,10 @@
     "showExtensionsLink": {
         "message": "顯示擴展管理",
         "description": "顯示擴展管理選項"
+    },
+    "showBookmarksLink": {
+        "message": "Show Bookmarks",
+        "description": "Show bookmarks link option"
     },
     "searchTab": {
         "message": "搜尋設定",

@@ -211,6 +211,10 @@
         "message": "Erweiterungen",
         "description": "Titel des Erweiterungs-Links"
     },
+    "bookmarksLinkTitle": {
+        "message": "Lesezeichen",
+        "description": "Titel des Lesezeichen-Links"
+    },
     "settingsLinkTitle": {
         "message": "Einstellungen",
         "description": "Titel des Einstellungs-Links"
@@ -594,7 +598,7 @@
         "description": "Helles Design Option"
     },
     "darkTheme": {
-        "message": "Dunkel", 
+        "message": "Dunkel",
         "description": "Dunkles Design Option"
     },
     "autoTheme": {
@@ -668,6 +672,10 @@
     "showExtensionsLink": {
         "message": "Erweiterungen anzeigen",
         "description": "Option zum Anzeigen des Erweiterungs-Links"
+    },
+    "showBookmarksLink": {
+        "message": "Show Bookmarks",
+        "description": "Show bookmarks link option"
     },
     "donateTab": {
         "message": "Spenden",
