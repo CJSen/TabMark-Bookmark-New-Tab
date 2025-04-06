@@ -1,10 +1,10 @@
 import { featureTips } from './feature-tips.js';
 import { initGestureNavigation } from './gesture-navigation.js';
-import { 
-  SearchEngineManager, 
+import {
+  SearchEngineManager,
   updateSearchEngineIcon,
   setSearchEngineIcon,
-  createSearchEngineDropdown, 
+  createSearchEngineDropdown,
   initializeSearchEngineDialog,
   getSearchUrl,
   createTemporarySearchTabs,
@@ -221,7 +221,7 @@ document.addEventListener('DOMContentLoaded', function () {
         styleElement.id = 'custom-card-height';
         document.head.appendChild(styleElement);
       }
-      
+
       // 设置卡片高度
       styleElement.textContent = `
         .card {
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', function () {
   updateSearchEngineIcon(defaultSearchEngine);
 
   const searchEngineIcon = document.getElementById('search-engine-icon');
-  if (searchEngineIcon && searchEngineIcon.src === '') {      
+  if (searchEngineIcon && searchEngineIcon.src === '') {
     searchEngineIcon.src = '../images/placeholder-icon.svg';
   }
 });
@@ -259,7 +259,7 @@ function getLocalizedMessage(messageName) {
 // Define the context menu creation function
 function createContextMenu() {
   console.log('Creating context menu');
-  
+
   // 移除任何已存在的上下文菜单
   const existingMenu = document.querySelector('.custom-context-menu');
   if (existingMenu) {
@@ -275,12 +275,12 @@ function createContextMenu() {
     { text: getLocalizedMessage('openInNewWindow'), icon: 'launch', action: () => currentBookmark && openInNewWindow(currentBookmark.url) },
     { text: getLocalizedMessage('openInIncognito'), icon: 'visibility_off', action: () => currentBookmark && openInIncognito(currentBookmark.url) },
     { text: getLocalizedMessage('editQuickLink'), icon: 'edit', action: () => currentBookmark && openEditDialog(currentBookmark) },
-    { 
-      text: getLocalizedMessage('deleteQuickLink'), 
-      icon: 'delete', 
+    {
+      text: getLocalizedMessage('deleteQuickLink'),
+      icon: 'delete',
       action: () => {
         console.log('Delete action triggered. Current item:', currentBookmark);
-        
+
         if (!currentBookmark) {
           console.error('No item selected for deletion');
           return;
@@ -294,13 +294,13 @@ function createContextMenu() {
             url: currentBookmark.url
           }
         };
-        
+
         console.log('Set itemToDelete:', itemToDelete);
-        
-        const message = itemToDelete.type === 'quickLink' 
+
+        const message = itemToDelete.type === 'quickLink'
           ? chrome.i18n.getMessage("confirmDeleteQuickLink", [`<strong>${itemToDelete.data.title}</strong>`])
           : chrome.i18n.getMessage("confirmDeleteBookmark", [`<strong>${itemToDelete.data.title}</strong>`]);
-        
+
         showConfirmDialog(message, () => {
           if (itemToDelete && itemToDelete.data) {
             if (itemToDelete.type === 'quickLink') {
@@ -323,16 +323,16 @@ function createContextMenu() {
       divider.className = 'custom-context-menu-divider';
       menu.appendChild(divider);
     }
-    
+
     const menuItem = document.createElement('div');
     menuItem.className = 'custom-context-menu-item';
-    
+
     const icon = document.createElement('span');
     icon.className = 'material-icons';
     icon.innerHTML = ICONS[item.icon];
     icon.style.marginRight = '8px';
     icon.style.fontSize = '18px';
-    
+
     const text = document.createElement('span');
     text.textContent = item.text;
 
@@ -357,16 +357,16 @@ function applyBackgroundColor() {
     const savedBg = localStorage.getItem('selectedBackground');
     if (savedBg) {
         const useDefaultBackground = localStorage.getItem('useDefaultBackground');
-        
+
         if (useDefaultBackground !== 'true') {
             document.querySelectorAll('.settings-bg-option').forEach(option => {
                 option.classList.remove('active');
             });
             return;
         }
-        
+
         document.documentElement.className = savedBg;
-        
+
         // 使用 WelcomeManager 更新欢迎消息颜色
         const welcomeElement = document.getElementById('welcome-message');
         if (welcomeElement && window.WelcomeManager) {
@@ -511,7 +511,7 @@ let resizeObserver = null;
 function initVirtualScroll() {
   bookmarksList = document.getElementById('bookmarks-list');
   if (!bookmarksList) return;
-  
+
   visibleItems = Math.ceil(window.innerHeight / itemHeight) + 2 * bufferSize;
 
   // 渲染函数
@@ -575,14 +575,14 @@ function initVirtualScroll() {
 
         cleanup();
         allBookmarks = bookmarks;
-        
+
         updateContainerHeight();
         updateFolderName(parentId);
         renderVisibleBookmarks();
-        
+
         bookmarksList.dataset.parentId = parentId;
         initializeListeners();
-        
+
         resolve();
       });
     });
@@ -596,10 +596,10 @@ function initVirtualScroll() {
 document.addEventListener('DOMContentLoaded', function() {
   // 初始化虚拟滚动
   initVirtualScroll();
-  
+
   // 初始化滚动指示器
   initScrollIndicator();
-  
+
   // 其他初始化代码...
   startPeriodicSync();
   setupSpecialLinks();
@@ -609,7 +609,7 @@ document.addEventListener('DOMContentLoaded', function() {
   createSearchEngineDropdown();
   initializeSearchEngineDialog();
 
- 
+
 
   // 加载保存的背景颜色
   const savedBg = localStorage.getItem('selectedBackground');
@@ -678,15 +678,15 @@ document.addEventListener('DOMContentLoaded', function() {
         opt.classList.remove('active');
         console.log('[Background] Removing active state from:', opt.getAttribute('data-bg'));
       });
-      
+
       // 添加当前选项的 active 状态
       this.classList.add('active');
       console.log('[Background] Setting active state for:', bgClass);
-      
+
       document.documentElement.className = bgClass;
       localStorage.setItem('selectedBackground', bgClass);
       localStorage.setItem('useDefaultBackground', 'true');
-      
+
       // 清除壁纸相关的状态
       document.querySelectorAll('.wallpaper-option').forEach(opt => {
         opt.classList.remove('active');
@@ -739,19 +739,19 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   // 检测是否在 Side Panel 中运行
-  const isSidePanel = window.location.search.includes('context=side_panel') || 
+  const isSidePanel = window.location.search.includes('context=side_panel') ||
                      window.location.hash.includes('context=side_panel');
-  
+
   if (isSidePanel) {
     document.body.classList.add('is-sidepanel');
-    
+
     // 直接隐藏页脚 - 使用更直接的方法
     const footer = document.querySelector('footer');
     if (footer) {
       footer.style.display = 'none';
       footer.setAttribute('data-sidepanel-hidden', 'true'); // 添加标记以便于调试
     }
-    
+
     // 隐藏一些在 Side Panel 中不需要的元素
     const elementsToHide = [
       '.theme-toggle',
@@ -759,14 +759,14 @@ document.addEventListener('DOMContentLoaded', function() {
       '.links-icons',
       '.settings-icon'
     ];
-    
+
     elementsToHide.forEach(selector => {
       const element = document.querySelector(selector);
       if (element) {
         element.style.display = 'none';
       }
     });
-    
+
     // 调整布局和尺寸
     const sidebarContainer = document.getElementById('sidebar-container');
     if (sidebarContainer) {
@@ -786,17 +786,17 @@ document.addEventListener('DOMContentLoaded', function() {
     if (searchInput) {
       // 重新初始化搜索框高度
       adjustTextareaHeight();
-      
+
       // 确保输入事件监听器正常工作
       searchInput.addEventListener('input', adjustTextareaHeight);
     }
-    
+
     // 调整默认文件夹切换区域的位置
     const defaultFoldersTabs = document.querySelector('.default-folders-tabs');
     if (defaultFoldersTabs) {
       defaultFoldersTabs.style.bottom = '20px'; // 由于页脚被隐藏，调整底部距离
     }
-    
+
     // 添加一个延迟检查，确保页脚真的被隐藏了
     setTimeout(() => {
       const footerCheck = document.querySelector('footer');
@@ -806,19 +806,19 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.add('force-hide-footer');
       }
     }, 500);
-    
+
     // 隐藏欢迎语
     const welcomeMessage = document.getElementById('welcome-message');
     const welcomeContainer = document.querySelector('.welcome-search-container');
-    
+
     if (welcomeMessage) {
       welcomeMessage.style.display = 'none';
     }
-    
+
     if (welcomeContainer) {
       welcomeContainer.style.display = 'none';
     }
-    
+
     // 调整搜索容器位置
     const searchContainer = document.querySelector('.search-container');
     if (searchContainer) {
@@ -848,21 +848,21 @@ document.addEventListener('DOMContentLoaded', function() {
   // 应用保存的界面元素显示设置
   chrome.storage.sync.get(
     [
-      'showSearchBox', 
-      'showWelcomeMessage', 
+      'showSearchBox',
+      'showWelcomeMessage',
       'showFooter',
       'showHistoryLink',
       'showDownloadsLink',
       'showPasswordsLink',
       'showExtensionsLink'
-    ], 
+    ],
     (result) => {
       // 应用搜索框显示设置 - 修改为默认隐藏
       const searchContainer = document.querySelector('.search-container');
       if (searchContainer) {
         searchContainer.style.display = result.showSearchBox === true ? '' : 'none';
       }
-      
+
       // 应用欢迎语显示设置
       const welcomeMessage = document.getElementById('welcome-message');
       if (welcomeMessage) {
@@ -871,13 +871,13 @@ document.addEventListener('DOMContentLoaded', function() {
         // 然后根据设置决定是否显示
         welcomeMessage.style.display = result.showWelcomeMessage !== false ? '' : 'none';
       }
-      
+
       // 应用页脚显示设置
       const footer = document.querySelector('footer');
       if (footer) {
         footer.style.display = result.showFooter !== false ? '' : 'none';
       }
-      
+
       // 应用快捷链接图标显示设置
       const toggleElementVisibility = (selector, isVisible) => {
         const element = document.querySelector(selector);
@@ -885,21 +885,21 @@ document.addEventListener('DOMContentLoaded', function() {
           element.style.display = isVisible ? '' : 'none';
         }
       };
-      
+
       toggleElementVisibility('#history-link', result.showHistoryLink !== false);
       toggleElementVisibility('#downloads-link', result.showDownloadsLink !== false);
       toggleElementVisibility('#passwords-link', result.showPasswordsLink !== false);
       toggleElementVisibility('#extensions-link', result.showExtensionsLink !== false);
-      
+
       // 检查是否所有链接都被隐藏
       const linksContainer = document.querySelector('.links-icons');
       if (linksContainer) {
-        const allLinksHidden = 
-          result.showHistoryLink === false && 
-          result.showDownloadsLink === false && 
-          result.showPasswordsLink === false && 
+        const allLinksHidden =
+          result.showHistoryLink === false &&
+          result.showDownloadsLink === false &&
+          result.showPasswordsLink === false &&
           result.showExtensionsLink === false;
-        
+
         linksContainer.style.display = allLinksHidden ? 'none' : '';
       }
     }
@@ -982,7 +982,7 @@ function updateBookmarkCards() {
 document.addEventListener('DOMContentLoaded', function () {
   // Create context menu immediately when the document loads
   contextMenu = createContextMenu();
-  
+
   const searchEngineIcon = document.getElementById('search-engine-icon');
   const defaultSearchEngine = localStorage.getItem('selectedSearchEngine') || 'google';
   console.log('[Init] Default search engine:', localStorage.getItem('selectedSearchEngine'));
@@ -992,10 +992,10 @@ document.addEventListener('DOMContentLoaded', function () {
   let bookmarkTreeNodes = []; // 定义全局变量
   // 调用 updateBookmarkCards
   updateBookmarkCards();
-  
+
   updateSearchEngineIcon(defaultSearchEngine);
 
-  if (searchEngineIcon.src === '') {      
+  if (searchEngineIcon.src === '') {
     searchEngineIcon.src = '../images/placeholder-icon.svg';
   }
   setTimeout(() => {
@@ -1012,20 +1012,20 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // ... 其他代码 ...
 
-  
 
 
-  
+
+
   // 优化后的更新显示函数
   async function updateBookmarksDisplay(parentId) {
     const bookmarksContainer = document.querySelector('.bookmarks-container');
-    
+
     // 添加加载状态
     bookmarksContainer.classList.add('loading');
-    
+
     try {
       const cached = bookmarksCache.get(parentId);
-      
+
       if (cached && !movedItemId) {
         // 使用缓存数据进行分页显示
         renderBookmarksPage(cached, 0);
@@ -1036,10 +1036,10 @@ document.addEventListener('DOMContentLoaded', function () {
         if (chrome.runtime.lastError) {
           throw chrome.runtime.lastError;
         }
-        
+
         // 缓存新数据
         bookmarksCache.set(parentId, bookmarks);
-        
+
         // 初始渲染第一页
         renderBookmarksPage({ bookmarks, totalCount: bookmarks.length }, 0);
       });
@@ -1053,28 +1053,28 @@ document.addEventListener('DOMContentLoaded', function () {
   function renderBookmarksPage(cachedData, pageIndex, pageSize = 100) {
     const startIndex = pageIndex * pageSize;
     const endIndex = Math.min(startIndex + pageSize, cachedData.totalCount);
-    
+
     const bookmarksList = document.getElementById('bookmarks-list');
     const bookmarksContainer = document.querySelector('.bookmarks-container');
-    
+
     // 使用 DocumentFragment 优化 DOM 操作
     const fragment = document.createDocumentFragment();
-    
+
     // 获取当前页的书签
     const pageBookmarks = cachedData.bookmarks.slice(startIndex, endIndex);
-    
+
     // 渲染书签
     pageBookmarks.forEach((bookmark, index) => {
-      const bookmarkElement = bookmark.url ? 
-        createBookmarkCard(bookmark, startIndex + index) : 
+      const bookmarkElement = bookmark.url ?
+        createBookmarkCard(bookmark, startIndex + index) :
         createFolderCard(bookmark, startIndex + index);
       fragment.appendChild(bookmarkElement);
     });
-    
+
     // 更新 DOM
     bookmarksList.innerHTML = '';
     bookmarksList.appendChild(fragment);
-    
+
     // 更新分页信息
     updatePagination(pageIndex, Math.ceil(cachedData.totalCount / pageSize));
   }
@@ -1089,15 +1089,15 @@ document.addEventListener('DOMContentLoaded', function () {
   function syncBookmarkOrder(parentId) {
     const cached = bookmarksCache.get(parentId);
     if (!cached) return;
-    
+
     chrome.bookmarks.getChildren(parentId, (bookmarks) => {
       const chromeOrder = bookmarks.map(b => b.id);
       const cachedOrder = cached.bookmarks.map(b => b.id);
-      
+
       if (JSON.stringify(chromeOrder) !== JSON.stringify(cachedOrder)) {
         // 更新缓存
         bookmarksCache.set(parentId, bookmarks);
-        
+
         // 重新渲染当前页
         renderBookmarksPage({ bookmarks, totalCount: bookmarks.length }, 0);
       }
@@ -1107,11 +1107,11 @@ document.addEventListener('DOMContentLoaded', function () {
   // 修改右键菜单事件监听器
   document.addEventListener('contextmenu', async function (event) {
     const targetFolder = event.target.closest('.bookmark-folder');
-    
+
     if (targetFolder) {
       event.preventDefault();
       event.stopPropagation(); // 阻止事件冒泡
-      
+
       // 确保文件夹上下文菜单存在
       if (!bookmarkFolderContextMenu) {
         bookmarkFolderContextMenu = createBookmarkFolderContextMenu();
@@ -1125,44 +1125,44 @@ document.addEventListener('DOMContentLoaded', function () {
       // 更新当前文件夹
       const oldFolder = currentBookmarkFolder;
       currentBookmarkFolder = targetFolder;
-      
+
       // 重新创建菜单项
       await createMenuItems(bookmarkFolderContextMenu);
-      
+
       // 先显示菜单但设为不可见，以便获取其尺寸
       bookmarkFolderContextMenu.style.display = 'block';
       bookmarkFolderContextMenu.style.visibility = 'hidden';
       bookmarkFolderContextMenu.style.left = '0';
       bookmarkFolderContextMenu.style.top = '0';
-      
+
       // 获取视窗尺寸
       const viewportWidth = window.innerWidth;
       const viewportHeight = window.innerHeight;
-      
+
       // 等待一下以确保菜单已渲染
       setTimeout(() => {
         const menuRect = bookmarkFolderContextMenu.getBoundingClientRect();
-        
+
         // 计算最佳位置
         let left = event.clientX;
         let top = event.clientY;
-        
+
         // 检查右侧空间
         if (left + menuRect.width > viewportWidth) {
           // 如果右侧空间不足，尝试将菜单放在点击位置的左侧
           left = Math.max(5, left - menuRect.width);
         }
-        
+
         // 检查底部空间
         if (top + menuRect.height > viewportHeight) {
           // 如果底部空间不足，尝试将菜单放在点击位置的上方
           top = Math.max(5, viewportHeight - menuRect.height - 5);
         }
-        
+
         // 应用计算后的位置
         bookmarkFolderContextMenu.style.left = `${left}px`;
         bookmarkFolderContextMenu.style.top = `${top}px`;
-        
+
         // 使菜单可见
         bookmarkFolderContextMenu.style.visibility = 'visible';
       }, 0);
@@ -1177,8 +1177,8 @@ document.addEventListener('DOMContentLoaded', function () {
   // 修改文档点击事件，确保正确关闭菜单
   document.addEventListener('click', function(event) {
     // 如果点击的不是菜单本身，则关闭菜单
-    if (bookmarkFolderContextMenu && 
-        !bookmarkFolderContextMenu.contains(event.target) && 
+    if (bookmarkFolderContextMenu &&
+        !bookmarkFolderContextMenu.contains(event.target) &&
         !event.target.closest('.bookmark-folder')) {
       bookmarkFolderContextMenu.style.display = 'none';
       currentBookmarkFolder = null; // 重置当前文件夹
@@ -1200,7 +1200,7 @@ document.addEventListener('DOMContentLoaded', function () {
       contextMenu.style.display = 'none';
         currentBookmark = null;
       }
-      
+
       if (bookmarkFolderContextMenu) {
         bookmarkFolderContextMenu.style.display = 'none';
         currentBookmarkFolder = null;
@@ -1258,7 +1258,7 @@ async function waitForFirstCategory(attemptsLeft = 5) {
 
     // 2. 尝试获取上次访问的文件夹
     const { lastViewedFolder } = await chrome.storage.local.get('lastViewedFolder');
-    
+
     if (lastViewedFolder) {
       try {
         const results = await chrome.bookmarks.get(lastViewedFolder);
@@ -1323,7 +1323,7 @@ async function waitForFirstCategory(attemptsLeft = 5) {
 async function initDefaultFoldersTabs() {
   const tabsContainer = document.querySelector('.tabs-container');
   const defaultFoldersTabs = document.querySelector('.default-folders-tabs');
-  
+
   if (!tabsContainer || !defaultFoldersTabs) {
     console.error('Tabs container not found');
     return;
@@ -1333,10 +1333,10 @@ async function initDefaultFoldersTabs() {
   const data = await chrome.storage.sync.get(['defaultFolders', 'lastViewedFolder']);
   let defaultFolders = data.defaultFolders?.items || [];
   const lastViewedFolder = data.lastViewedFolder;
-  
+
   // 确保文件夹按 order 排序
   defaultFolders = defaultFolders.sort((a, b) => a.order - b.order);
-  
+
   console.log('Initializing default folders tabs:', defaultFolders);
 
   // 清空现有标签
@@ -1362,7 +1362,7 @@ async function initDefaultFoldersTabs() {
   // 如果有默认文件夹，激活第一个或上次访问的文件夹
   if (defaultFolders.length > 0) {
     let folderToActivate;
-    
+
     // 检查上次访问的文件夹是否在默认文件夹列表中
     if (lastViewedFolder && defaultFolders.some(f => f.id === lastViewedFolder)) {
       folderToActivate = lastViewedFolder;
@@ -1403,15 +1403,15 @@ function initWheelSwitching() {
   let isProcessing = false;
   let wheelEventListener = null;
   let isEnabled = false; // 默认禁用
-  
+
   // 创建滚轮事件处理函数
   const wheelHandler = async (event) => {
     // 如果功能被禁用，直接返回
     if (!isEnabled) return;
-    
+
     // 检查是否在搜索相关元素内滚动
-    if (event.target.closest('#bookmarks-list') || 
-        event.target.closest('.search-form') || 
+    if (event.target.closest('#bookmarks-list') ||
+        event.target.closest('.search-form') ||
         event.target.closest('.search-suggestions') ||
         event.target.closest('.search-suggestions-wrapper')) {
       return;
@@ -1460,7 +1460,7 @@ function initWheelSwitching() {
         const nextFolder = defaultFolders.find(f => f.order === nextOrder);
         if (nextFolder) {
           await switchToFolder(nextFolder.id);
-          
+
           // 添加切换动画效果
           const tabs = document.querySelectorAll('.folder-tab');
           tabs.forEach(tab => {
@@ -1485,7 +1485,7 @@ function initWheelSwitching() {
       }
     }, 50); // 50ms 的防抖延迟
   };
-  
+
   // 添加或移除事件监听器的函数
   const updateWheelListener = (enabled) => {
     if (enabled) {
@@ -1500,13 +1500,13 @@ function initWheelSwitching() {
       }
     }
   };
-  
+
   // 检查设置并初始化
   chrome.storage.sync.get({ enableWheelSwitching: false }, (result) => {
     isEnabled = result.enableWheelSwitching;
     updateWheelListener(isEnabled);
   });
-  
+
   // 监听设置变化
   document.addEventListener('wheelSwitchingChanged', (event) => {
     isEnabled = event.detail.enabled;
@@ -1518,7 +1518,7 @@ function initWheelSwitching() {
 async function switchToFolder(folderId) {
   try {
     console.log('Switching to folder:', folderId);
-    
+
     // 验证文件夹是否存在
     const results = await chrome.bookmarks.get(folderId);
     if (!results || results.length === 0) {
@@ -1541,11 +1541,11 @@ async function switchToFolder(folderId) {
     ]);
 
     // 保存最后访问的文件夹
-    await chrome.storage.local.set({ 
+    await chrome.storage.local.set({
       lastViewedFolder: folderId,
       lastViewedTime: Date.now()
     });
-    
+
   } catch (error) {
     console.error('Error switching folder:', error);
     // 错误时回退到根目录
@@ -1690,7 +1690,7 @@ function addBreadcrumbClickListeners() {
 
 function navigateToPath(path) {
   const pathParts = path.split(' > ');
-  
+
   // 获取书签栏的名称
   getBookmarksBarName().then(bookmarksBarName => {
     let currentId = '1'; // 默认从根目录开始
@@ -1737,13 +1737,13 @@ function displayBookmarks(bookmark) {
 
   // 先移除 loaded 类
   bookmarksContainer.classList.remove('loaded');
-  
+
   const fragment = document.createDocumentFragment();
-  
+
   let itemsToDisplay = bookmark.children || [];
-  
+
   itemsToDisplay.sort((a, b) => a.index - b.index);
-  
+
   itemsToDisplay.forEach((child) => {
     if (child.url) {
       const card = createBookmarkCard(child, child.index);
@@ -1753,18 +1753,18 @@ function displayBookmarks(bookmark) {
       fragment.appendChild(folderCard);
     }
   });
-  
+
   bookmarksList.innerHTML = '';
   bookmarksList.appendChild(fragment);
   bookmarksList.dataset.parentId = bookmark.id;
-  
+
   // 使用 requestAnimationFrame 确保在下一帧添加 loaded 类
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       bookmarksContainer.classList.add('loaded');
     });
   });
-  
+
   setupSortable();
 }
 
@@ -1789,14 +1789,14 @@ function getColors(img) {
   }
 
   const sortedColors = Object.entries(colors).sort((a, b) => b[1] - a[1]);
-  
+
   if (sortedColors.length === 0) {
     // 如果图片完全透明，返回默认颜色
     return { primary: [200, 200, 200], secondary: [220, 220, 220] };
   }
-  
+
   const primaryColor = sortedColors[0][0].split(',').map(Number);
-  const secondaryColor = sortedColors.length > 1 
+  const secondaryColor = sortedColors.length > 1
     ? sortedColors[1][0].split(',').map(Number)
     : primaryColor.map(c => Math.min(255, c + 20)); // 如果只有一种颜色，创建一个稍微亮的次要颜色
 
@@ -1839,12 +1839,12 @@ function createBookmarkCard(bookmark, index) {
 
   // 尝试从缓存获取颜色
   const cachedColors = localStorage.getItem(`bookmark-colors-${bookmark.id}`);
-  
+
   if (cachedColors) {
     // 如果有缓存，直接应用缓存的颜色
     const colors = JSON.parse(cachedColors);
     applyColors(card, colors);
-    
+
     // 只加载 favicon 图片，不重新计算颜色
     img.onload = null;
   } else {
@@ -1913,7 +1913,7 @@ function createBookmarkCard(bookmark, index) {
     try {
       // 通过页面文件名判断环境
       const isSidePanel = window.location.pathname.endsWith('sidepanel.html');
-      const isInternalUrl = bookmark.url.startsWith('chrome://') || 
+      const isInternalUrl = bookmark.url.startsWith('chrome://') ||
                            bookmark.url.startsWith('chrome-extension://') ||
                            bookmark.url.startsWith('edge://') ||
                            bookmark.url.startsWith('about:');
@@ -1946,12 +1946,12 @@ function createBookmarkCard(bookmark, index) {
           // 默认在新标签页中打开
           const openInNewTab = result.sidepanelOpenInNewTab !== false;
           const openInSidepanel = result.sidepanelOpenInSidepanel === true;
-          
+
           console.log('[Bookmark Click] Side Panel settings:', {
             openInNewTab: openInNewTab,
             openInSidepanel: openInSidepanel
           });
-          
+
           if (openInSidepanel) {
             // 在侧边栏内打开链接
             console.log('[Bookmark Click] Opening in Side Panel iframe');
@@ -1963,11 +1963,11 @@ function createBookmarkCard(bookmark, index) {
                 console.log('[Bookmark Click] SidePanelManager not defined, using fallback method');
                 const sidePanelContent = document.getElementById('side-panel-content');
                 const sidePanelIframe = document.getElementById('side-panel-iframe');
-                
+
                 if (sidePanelContent && sidePanelIframe) {
                   sidePanelContent.style.display = 'block';
                   sidePanelIframe.src = bookmark.url;
-                  
+
                   // 添加返回按钮
                   let backButton = document.querySelector('.back-to-links');
                   if (!backButton) {
@@ -1975,14 +1975,14 @@ function createBookmarkCard(bookmark, index) {
                     backButton.className = 'back-to-links';
                     backButton.innerHTML = '<span class="material-icons">arrow_back</span>';
                     document.body.appendChild(backButton);
-                    
+
                     // 添加点击事件
                     backButton.addEventListener('click', () => {
                       sidePanelContent.style.display = 'none';
                       backButton.style.display = 'none';
                     });
                   }
-                  
+
                   // 显示返回按钮
                   backButton.style.display = 'flex';
                 } else {
@@ -2064,10 +2064,10 @@ function applyColors(card, colors) {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
   const adjustedPrimary = adjustColor(colors.primary[0], colors.primary[1], colors.primary[2]);
   const adjustedSecondary = adjustColor(colors.secondary[0], colors.secondary[1], colors.secondary[2]);
-  
+
   const opacity = isDark ? '0.1' : '0.06';
-  card.style.background = `linear-gradient(135deg, 
-    rgba(${adjustedPrimary.r}, ${adjustedPrimary.g}, ${adjustedPrimary.b}, ${opacity}), 
+  card.style.background = `linear-gradient(135deg,
+    rgba(${adjustedPrimary.r}, ${adjustedPrimary.g}, ${adjustedPrimary.b}, ${opacity}),
     rgba(${adjustedSecondary.r}, ${adjustedSecondary.g}, ${adjustedSecondary.b}, ${opacity}))`;
   card.style.border = `1px solid rgba(${adjustedPrimary.r}, ${adjustedPrimary.g}, ${adjustedPrimary.b}, ${isDark ? '0.1' : '0.01'})`;
 }
@@ -2165,7 +2165,7 @@ function showContextMenu(event, item, type = 'bookmark') {
   // 清除之前的状态
   itemToDelete = null;
   currentBookmark = null;
-  
+
   // 设置当前项目，确保包含类型信息
   currentBookmark = {
     id: item.id || item.dataset?.id,
@@ -2179,35 +2179,35 @@ function showContextMenu(event, item, type = 'bookmark') {
   contextMenu.style.visibility = 'hidden';
   contextMenu.style.left = '0';
   contextMenu.style.top = '0';
-  
+
   // 获取视窗尺寸
   const viewportWidth = window.innerWidth;
   const viewportHeight = window.innerHeight;
-  
+
   // 等待一下以确保菜单已渲染
   setTimeout(() => {
     const menuRect = contextMenu.getBoundingClientRect();
-    
+
     // 计算最佳位置
     let left = event.clientX;
     let top = event.clientY;
-    
+
     // 检查右侧空间
     if (left + menuRect.width > viewportWidth) {
       // 如果右侧空间不足，尝试将菜单放在点击位置的左侧
       left = Math.max(5, left - menuRect.width);
     }
-    
+
     // 检查底部空间
     if (top + menuRect.height > viewportHeight) {
       // 如果底部空间不足，尝试将菜单放在点击位置的上方
       top = Math.max(5, viewportHeight - menuRect.height - 5);
     }
-    
+
     // 应用计算后的位置
     contextMenu.style.left = `${left}px`;
     contextMenu.style.top = `${top}px`;
-    
+
     // 使菜单可见
     contextMenu.style.visibility = 'visible';
   }, 0);
@@ -2222,14 +2222,14 @@ function createContextMenuItems(contextMenu, type) {
     { text: getLocalizedMessage('openInNewWindow'), icon: 'launch', action: () => currentBookmark && openInNewWindow(currentBookmark.url) },
     { text: getLocalizedMessage('openInIncognito'), icon: 'visibility_off', action: () => currentBookmark && openInIncognito(currentBookmark.url) },
     { text: getLocalizedMessage('editQuickLink'), icon: 'edit', action: () => currentBookmark && openEditDialog(currentBookmark) },
-    { 
-      text: type === 'quickLink' ? getLocalizedMessage('deleteQuickLink') : getLocalizedMessage('deleteBookmark'), 
-      icon: 'delete', 
+    {
+      text: type === 'quickLink' ? getLocalizedMessage('deleteQuickLink') : getLocalizedMessage('deleteBookmark'),
+      icon: 'delete',
       action: () => {
         console.log('=== Delete Action Triggered ===');
         console.log('Current bookmark:', currentBookmark);
         console.log('Menu type:', type);
-        
+
         if (!currentBookmark) {
           console.error('No item selected for deletion');
           return;
@@ -2245,20 +2245,20 @@ function createContextMenuItems(contextMenu, type) {
             type: currentBookmark.type  // 确保在 data 中也保存类型信息
           }
         };
-        
+
         console.log('Set itemToDelete:', itemToDelete);
-        
+
         // 根据类型显示不同的确认消息
-        const message = itemToDelete.type === 'quickLink' 
+        const message = itemToDelete.type === 'quickLink'
           ? chrome.i18n.getMessage("confirmDeleteQuickLink", [`<strong>${itemToDelete.data.title}</strong>`])
           : chrome.i18n.getMessage("confirmDeleteBookmark", [`<strong>${itemToDelete.data.title}</strong>`]);
-        
+
         console.log('Showing confirmation dialog with message:', message);
-        
+
         showConfirmDialog(message, () => {
           console.log('=== Delete Confirmation Callback ===');
           console.log('itemToDelete:', itemToDelete);
-          
+
           if (itemToDelete && itemToDelete.data) {
             if (itemToDelete.type === 'quickLink') {
               console.log('Deleting quick link:', itemToDelete.data);
@@ -2280,13 +2280,13 @@ function createContextMenuItems(contextMenu, type) {
   menuItems.forEach(item => {
     const menuItem = document.createElement('div');
     menuItem.className = 'custom-context-menu-item';
-    
+
     const icon = document.createElement('span');
     icon.className = 'material-icons';
     icon.innerHTML = ICONS[item.icon];
     icon.style.marginRight = '8px';
     icon.style.fontSize = '18px';
-    
+
     const text = document.createElement('span');
     text.textContent = item.text;
 
@@ -2325,30 +2325,30 @@ function showDeleteConfirmDialog() {
 
   // 清空之前的消息
   confirmMessage.innerHTML = '';
-  
+
   // 根据类型显示不同的确认消息
-  const message = itemToDelete.type === 'quickLink' 
+  const message = itemToDelete.type === 'quickLink'
     ? chrome.i18n.getMessage("confirmDeleteQuickLink", [`<strong>${itemToDelete.data.title}</strong>`])
     : chrome.i18n.getMessage("confirmDeleteBookmark", [`<strong>${itemToDelete.data.title}</strong>`]);
   confirmMessage.innerHTML = message;
-  
+
   console.log('Showing confirmation dialog for:', {
     type: itemToDelete.type,
     title: itemToDelete.data.title
   });
-  
+
   confirmDialog.style.display = 'block';
 
   const handleConfirm = () => {
     console.log('=== Delete Confirmed ===');
     console.log('Deleting item:', itemToDelete);
-    
+
     if (itemToDelete.type === 'quickLink') {
       deleteQuickLink(itemToDelete.data);
     } else {
       deleteBookmark(itemToDelete.data.id, itemToDelete.data.title);
     }
-    
+
     confirmDialog.style.display = 'none';
     cleanup();
     itemToDelete = null;
@@ -2391,7 +2391,7 @@ function createQuickLinkCard(quickLink) {
     console.log('=== Quick Link Context Menu Triggered ===');
     console.log('Quick link data:', quickLink);
     console.log('Card dataset:', this.dataset);
-    
+
     // 构造完整的快捷链接对象
     const quickLinkData = {
       id: quickLink.id || this.dataset.id,
@@ -2399,7 +2399,7 @@ function createQuickLinkCard(quickLink) {
       url: quickLink.url || this.dataset.url,
       type: 'quickLink'  // 明确指定类型
     };
-    
+
     console.log('Constructed quickLinkData:', quickLinkData);
     showContextMenu(event, quickLinkData, 'quickLink');
   });
@@ -2434,7 +2434,7 @@ function confirmBookmarkDeletion(bookmark) {
 
   // 设置当前要删除的书签
   itemToDelete = { ...bookmark };
-  
+
   console.log('States after setting bookmark:', {
     itemToDelete,
     currentBookmark
@@ -2452,13 +2452,13 @@ function confirmBookmarkDeletion(bookmark) {
 
   // 清空之前的消息
   confirmMessage.innerHTML = '';
-  
+
   // 只显示书签删除的确认消息
   confirmMessage.innerHTML = chrome.i18n.getMessage(
-    "confirmDeleteBookmark", 
+    "confirmDeleteBookmark",
     [`<strong>${bookmark.title}</strong>`]
   );
-  
+
   confirmDialog.style.display = 'block';
 
   const handleConfirm = () => {
@@ -2526,13 +2526,13 @@ function confirmQuickLinkDeletion(quickLink) {
 
   // 清空之前的消息
   confirmMessage.innerHTML = '';
-  
+
   // 只显示快捷链接删除的确认消息
   confirmMessage.innerHTML = chrome.i18n.getMessage(
-    "confirmDeleteQuickLink", 
+    "confirmDeleteQuickLink",
     [`<strong>${quickLink.title}</strong>`]
   );
-  
+
   confirmDialog.style.display = 'block';
 
   const handleConfirm = () => {
@@ -2575,10 +2575,10 @@ function clearDeleteStates() {
     itemToDelete,
     currentBookmark
   });
-  
+
   itemToDelete = null;
   currentBookmark = null;
-  
+
   console.log('States after clearing:', {
     itemToDelete,
     currentBookmark
@@ -2593,9 +2593,9 @@ function showConfirmDialog(message, callback) {
     currentBookmark: currentBookmark ? { ...currentBookmark } : null,
     type: itemToDelete ? itemToDelete.type : 'unknown'  // 从 itemToDelete 获取类型
   };
-  
+
   console.log('Current state:', currentState);
-  
+
   const confirmDialog = document.getElementById('confirm-dialog');
   const confirmMessage = document.getElementById('confirm-dialog-message');
   const confirmQuickLinkMessage = document.getElementById('confirm-delete-quick-link-message');
@@ -2613,7 +2613,7 @@ function showConfirmDialog(message, callback) {
     confirmQuickLinkMessage.innerHTML = '';
     confirmQuickLinkMessage.style.display = 'none';
   }
-  
+
   // 根据 itemToDelete 的类型显示相应的消息
   if (itemToDelete && itemToDelete.type === 'quickLink') {
     if (confirmQuickLinkMessage) {
@@ -2643,7 +2643,7 @@ function showConfirmDialog(message, callback) {
   const handleCancel = () => {
     console.log('Cancel clicked. Clearing state...');
     confirmDialog.style.display = 'none';
-    
+
     // 清空所有确认消息
     confirmMessage.innerHTML = '';
     confirmMessage.style.display = 'block';
@@ -2651,10 +2651,10 @@ function showConfirmDialog(message, callback) {
       confirmQuickLinkMessage.innerHTML = '';
       confirmQuickLinkMessage.style.display = 'none';
     }
-    
+
     // 使用之前保存的状态副本记录日志
     console.log('State before cancel:', currentState);
-    
+
     clearAllStates();
     cleanup();
   };
@@ -2676,7 +2676,7 @@ function showConfirmDialog(message, callback) {
 function clearAllStates() {
   itemToDelete = null;
   currentBookmark = null;
-  
+
   // 隐藏上下文菜单
   if (contextMenu) {
     contextMenu.style.display = 'none';
@@ -2686,7 +2686,7 @@ function clearAllStates() {
 function handleBookmarkDeletion() {
   console.log('=== Handling Bookmark Deletion ===');
   console.log('Current itemToDelete:', itemToDelete);
-  
+
   if (!itemToDelete || !itemToDelete.data) {
     console.error('No valid bookmark to delete');
     Utilities.showToast(getLocalizedMessage('deleteBookmarkError'));
@@ -2720,7 +2720,7 @@ function deleteBookmark(bookmarkId, bookmarkTitle) {
     bookmarkCard.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
     bookmarkCard.style.opacity = '0';
     bookmarkCard.style.transform = 'scale(0.95)';
-    
+
     // 等待动画完成后移除元素
     setTimeout(() => {
       bookmarkCard.remove();
@@ -2732,7 +2732,7 @@ function deleteBookmark(bookmarkId, bookmarkTitle) {
     if (chrome.runtime.lastError) {
       console.error('Error deleting bookmark:', chrome.runtime.lastError);
       Utilities.showToast(getLocalizedMessage('deleteBookmarkError'));
-      
+
       // 如果删除失败，恢复书签卡片
       if (bookmarkCard && bookmarkCard.parentNode) {
         bookmarkCard.style.opacity = '1';
@@ -2741,10 +2741,10 @@ function deleteBookmark(bookmarkId, bookmarkTitle) {
     } else {
       // 保留成功删除的日志，但简化
       Utilities.showToast(getLocalizedMessage('deleteSuccess'));
-      
+
       // 清除相关缓存
       bookmarksCache.clear();
-      
+
       // 更新父文件夹的显示
       const parentId = document.getElementById('bookmarks-list').dataset.parentId;
       if (parentId) {
@@ -2790,14 +2790,14 @@ function createFolderCard(folder, index) {
   const icon = document.createElement('span');
   icon.className = 'material-icons mr-2';
   icon.innerHTML = ICONS.folder;
-  
+
   const content = document.createElement('div');
   content.className = 'card-content';
-  
+
   const title = document.createElement('div');
   title.className = 'card-title';
   title.textContent = folder.title;
-  
+
   content.appendChild(title);
   card.appendChild(icon);
   card.appendChild(content);
@@ -2826,12 +2826,12 @@ function createFolderCard(folder, index) {
   card.addEventListener('contextmenu', async function (event) {
     event.preventDefault();
     event.stopPropagation();
-    
+
     console.log('Folder card right click:', {
       folderId: card.dataset.id,
       folderTitle: card.querySelector('.card-title')?.textContent
     });
-    
+
     // 确保文件夹上下文菜单存在
     if (!bookmarkFolderContextMenu) {
       bookmarkFolderContextMenu = createBookmarkFolderContextMenu();
@@ -2844,44 +2844,44 @@ function createFolderCard(folder, index) {
 
     // 更新当前文件夹
     currentBookmarkFolder = card;
-    
+
     // 重新创建菜单项以反映当前文件夹的状态
     await createMenuItems(bookmarkFolderContextMenu);
-    
+
     // 先显示菜单但设为不可见，以便获取其尺寸
     bookmarkFolderContextMenu.style.display = 'block';
     bookmarkFolderContextMenu.style.visibility = 'hidden';
     bookmarkFolderContextMenu.style.left = '0';
     bookmarkFolderContextMenu.style.top = '0';
-    
+
     // 获取视窗尺寸
     const viewportWidth = window.innerWidth;
     const viewportHeight = window.innerHeight;
-    
+
     // 等待一下以确保菜单已渲染
     setTimeout(() => {
       const menuRect = bookmarkFolderContextMenu.getBoundingClientRect();
-      
+
       // 计算最佳位置
       let left = event.clientX;
       let top = event.clientY;
-      
+
       // 检查右侧空间
       if (left + menuRect.width > viewportWidth) {
         // 如果右侧空间不足，尝试将菜单放在点击位置的左侧
         left = Math.max(5, left - menuRect.width);
       }
-      
+
       // 检查底部空间
       if (top + menuRect.height > viewportHeight) {
         // 如果底部空间不足，尝试将菜单放在点击位置的上方
         top = Math.max(5, viewportHeight - menuRect.height - 5);
       }
-      
+
       // 应用计算后的位置
       bookmarkFolderContextMenu.style.left = `${left}px`;
       bookmarkFolderContextMenu.style.top = `${top}px`;
-      
+
       // 使菜单可见
       bookmarkFolderContextMenu.style.visibility = 'visible';
     }, 0);
@@ -3015,7 +3015,7 @@ function updateAffectedBookmarks(parentId, movedItemId, newIndex) {
     const bookmarksList = document.getElementById('bookmarks-list');
     const bookmarkElements = Array.from(bookmarksList.children);
     const movedElement = bookmarksList.querySelector(`[data-id="${movedItemId}"]`);
-    
+
     if (!movedElement) {
       console.error('Moved element not found');
       reject(new Error('Moved element not found'));
@@ -3023,7 +3023,7 @@ function updateAffectedBookmarks(parentId, movedItemId, newIndex) {
     }
 
     const oldIndex = bookmarkElements.indexOf(movedElement);
-    
+
     // 如置没有变化，不需要更新
     if (oldIndex === newIndex) {
       resolve();
@@ -3189,10 +3189,10 @@ function createBookmarkFolderContextMenu() {
   return menu;
 }
 
-async function createMenuItems(menu) {  
+async function createMenuItems(menu) {
   console.log('=== Creating Menu Items ===');
   console.log('Current bookmark folder:', currentBookmarkFolder);
-  
+
   // 清空现有菜单项
   menu.innerHTML = '';
 
@@ -3204,7 +3204,7 @@ async function createMenuItems(menu) {
       const data = await chrome.storage.sync.get('defaultFolders');
       const defaultFolders = data.defaultFolders?.items || [];
       isDefault = defaultFolders.some(folder => folder.id === currentBookmarkFolder.dataset.id);
-      
+
       console.log('Folder status check:', {
         folderId: currentBookmarkFolder.dataset.id,
         isDefault: isDefault,
@@ -3218,14 +3218,14 @@ async function createMenuItems(menu) {
   }
 
   const menuItems = [
-    { 
+    {
       text: getLocalizedMessage('openAllBookmarks'),
-      icon: 'open_in_new',  
+      icon: 'open_in_new',
       action: () => {
         if (currentBookmarkFolder) {
           const folderId = currentBookmarkFolder.dataset.id;
           const folderTitle = currentBookmarkFolder.querySelector('.card-title').textContent;
-          
+
           chrome.bookmarks.getChildren(folderId, (bookmarks) => {
             // 过滤出有效的书签URL
             const validUrls = bookmarks
@@ -3257,17 +3257,17 @@ async function createMenuItems(menu) {
         const folderId = currentBookmarkFolder.dataset.id;
         const folderTitle = currentBookmarkFolder.querySelector('.card-title').textContent;
         const parentId = currentBookmarkFolder.dataset.parentId || '1';
-        
+
         showConfirmDialog(chrome.i18n.getMessage("confirmDeleteFolder", [`<strong>${folderTitle}</strong>`]), async () => {
           try {
             await chrome.bookmarks.removeTree(folderId);
-            
+
             // 1. 立即从 UI 中移除文件夹卡片
             const folderCard = document.querySelector(`.bookmark-folder[data-id="${folderId}"]`);
             if (folderCard) {
               folderCard.remove();
             }
-            
+
             // 2. 从侧边栏中移除对应的文件夹及其所有子文件夹
             const sidebarFolder = document.querySelector(`#categories-list li[data-id="${folderId}"]`);
             if (sidebarFolder) {
@@ -3284,7 +3284,7 @@ async function createMenuItems(menu) {
             if (bookmarksCache.data.has(parentId)) {
               bookmarksCache.delete(parentId);
             }
-            
+
             // 4. 显示删除成功的 toast 消息
             Utilities.showToast(getLocalizedMessage('deleteSuccess'));
 
@@ -3327,12 +3327,12 @@ async function createMenuItems(menu) {
         }
 
         await toggleDefaultFolder(folder);
-        
+
         // 重新获取当前状态
         const data = await chrome.storage.sync.get('defaultFolders');
         const defaultFolders = data.defaultFolders?.items || [];
         const newIsDefault = defaultFolders.some(f => f.id === folder.dataset.id);
-        
+
         console.log('Menu item status update:', {
           oldState: isDefault,
           newState: newIsDefault,
@@ -3344,7 +3344,7 @@ async function createMenuItems(menu) {
         if (menuItem) {
           const newText = getLocalizedMessage(newIsDefault ? 'removeFromDefaultFolders' : 'addToDefaultFolders');
           console.log('Updating menu item text to:', newText);
-          
+
           menuItem.querySelector('.text').textContent = newText;
           const iconElement = menuItem.querySelector('.icon-svg');
           if (iconElement) {
@@ -3363,18 +3363,18 @@ async function createMenuItems(menu) {
     });
     const menuItem = document.createElement('div');
     menuItem.className = 'custom-context-menu-item';
-    
+
     if (item.icon === 'keep' || item.icon === 'keep_off') {
       menuItem.dataset.action = 'toggleDefault';
     }
-    
+
     const icon = document.createElement('span');
     icon.className = 'icon-svg';
     icon.innerHTML = ICONS[item.icon];
     if (item.icon === 'keep' || item.icon === 'keep_off') {
       icon.classList.toggle('selected', isDefault);
     }
-    
+
     const text = document.createElement('span');
     text.className = 'text';
     text.textContent = item.text;
@@ -3521,7 +3521,7 @@ function setDefaultBookmark(bookmarkId) {
 function updateSidebarDefaultBookmarkIndicator() {
   const defaultBookmarkId = localStorage.getItem('defaultBookmarkId');
   selectSidebarFolder(defaultBookmarkId);
-  
+
   const allCategories = document.querySelectorAll('#categories-list li');
   allCategories.forEach(category => {
     const indicator = category.querySelector('.default-indicator');
@@ -3545,16 +3545,16 @@ let bookmarkOrderCache = {};
 function syncBookmarkOrder(parentId) {
   const cached = bookmarksCache.get(parentId);
   if (!cached) return;
-  
-  
+
+
   chrome.bookmarks.getChildren(parentId, (bookmarks) => {
     const chromeOrder = bookmarks.map(b => b.id);
     const cachedOrder = cached.bookmarks.map(b => b.id);
-    
+
     if (JSON.stringify(chromeOrder) !== JSON.stringify(cachedOrder)) {
       // 更新缓存
       bookmarksCache.set(parentId, bookmarks);
-      
+
       // 重新渲染当前页
       renderBookmarksPage({ bookmarks, totalCount: bookmarks.length }, 0);
     }
@@ -3784,7 +3784,7 @@ document.addEventListener('DOMContentLoaded', function () {
       contextMenu.style.display = 'none';
         currentBookmark = null;
       }
-      
+
       if (bookmarkFolderContextMenu) {
         bookmarkFolderContextMenu.style.display = 'none';
         currentBookmarkFolder = null;
@@ -3849,16 +3849,16 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateBookmarkCardColors(bookmarkCard, newUrl, img) {
     // 清旧的缓存
     localStorage.removeItem(`bookmark-colors-${bookmarkCard.dataset.id}`);
-    
+
     // 更新 favicon URL
     img.src = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(newUrl)}&size=32&t=${Date.now()}`;
-    
+
     img.onload = function () {
       const colors = getColors(img);
       applyColors(bookmarkCard, colors);
       localStorage.setItem(`bookmark-colors-${bookmarkCard.dataset.id}`, JSON.stringify(colors));
     };
-    
+
     img.onerror = function () {
       const defaultColors = { primary: [200, 200, 200], secondary: [220, 220, 220] };
       applyColors(bookmarkCard, defaultColors);
@@ -4108,7 +4108,7 @@ document.addEventListener('DOMContentLoaded', function () {
         // 原有的菜单项保持不变
         { text: getLocalizedMessage('rename'), icon: 'edit' },
         { text: getLocalizedMessage('delete'), icon: 'delete' },
-        { 
+        {
           text: isDefault ? getLocalizedMessage('removeFromDefaultFolders') : getLocalizedMessage('addToDefaultFolders'),
           icon: isDefault ? 'keep_off' : 'keep',
           action: async () => {
@@ -4313,8 +4313,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 添加新的书签
         bookmarks.forEach((bookmark, index) => {
-          const bookmarkElement = bookmark.url ? 
-            createBookmarkCard(bookmark, index) : 
+          const bookmarkElement = bookmark.url ?
+            createBookmarkCard(bookmark, index) :
             createFolderCard(bookmark, index);
           bookmarksList.appendChild(bookmarkElement);
         });
@@ -4353,7 +4353,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const allEngines = SearchEngineManager.getAllEngines();
     const engineConfig = allEngines.find(e => {
       // 匹配引擎名称或别名
-      return e.name.toLowerCase() === engine.toLowerCase() || 
+      return e.name.toLowerCase() === engine.toLowerCase() ||
              (e.aliases && e.aliases.some(alias => alias.toLowerCase() === engine.toLowerCase()));
     });
 
@@ -4364,7 +4364,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 确保 URL 中包含查询参数占位符
-    const url = engineConfig.url.includes('%s') ? 
+    const url = engineConfig.url.includes('%s') ?
       engineConfig.url.replace('%s', encodeURIComponent(query)) :
       engineConfig.url + encodeURIComponent(query);
 
@@ -4380,7 +4380,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const selectedEngine = this.getAttribute('data-engine');
         const searchInput = document.querySelector('.search-input');
         const searchQuery = searchInput.value.trim();
-        
+
         // 移除所有标签的激活状态
         tabs.forEach(t => t.classList.remove('active'));
         // 为当前点击的标签添加激活状态
@@ -4391,7 +4391,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const searchUrl = getSearchUrl(selectedEngine, searchQuery);
             window.open(searchUrl, '_blank');
             hideSuggestions();
-            
+
             // 使用 setTimeout 延迟恢复默认搜索引擎状态
             setTimeout(restoreDefaultSearchEngine, 300);
         }
@@ -4494,7 +4494,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (isSearching || searchQueue.length === 0) {
       return;
     }
-    
+
     const query = searchQueue.shift();
     debouncedPerformSearch(query);
   }
@@ -4536,13 +4536,13 @@ document.addEventListener('DOMContentLoaded', function () {
       chrome.storage.sync.get('openSearchInNewTab', (result) => {
         const openInNewTab = result.openSearchInNewTab !== false; // 默认为 true
         console.log('[Search] Opening URL:', url, 'in new tab:', openInNewTab);
-        
+
         if (openInNewTab) {
           window.open(url, '_blank');
         } else {
           window.location.href = url;
         }
-        
+
         hideSuggestions();
       });
     });
@@ -4588,7 +4588,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 确保 URL 中包含查询参数占位符
-    const url = engineConfig.url.includes('%s') ? 
+    const url = engineConfig.url.includes('%s') ?
       engineConfig.url.replace('%s', encodeURIComponent(query)) :
       engineConfig.url + encodeURIComponent(query);
 
@@ -4612,7 +4612,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // 初始化时调整高度
   adjustTextareaHeight();
-  
+
 
   const searchSuggestions = document.getElementById('search-suggestions');
 
@@ -4651,10 +4651,10 @@ document.addEventListener('DOMContentLoaded', function () {
           .filter(item => {
             const key = `${item.url}|${item.text}`;
             if (uniqueItems.has(key)) return false;
-            
+
             domainCounts[item.domain] = (domainCounts[item.domain] || 0) + 1;
             if (domainCounts[item.domain] > maxPerDomain) return false;
-            
+
             uniqueItems.set(key, item);
             return true;
           })
@@ -4688,13 +4688,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return new Promise((resolve) => {
       const startTime = new Date().getTime() - (30 * 24 * 60 * 60 * 1000); // 搜索最近30天的历史
       chrome.history.search(
-        { 
-          text: query, 
+        {
+          text: query,
           startTime: startTime,
-          maxResults: maxResults 
-        }, 
+          maxResults: maxResults
+        },
         (results) => {
-          
+
           // 对历史记录进行去重
           const uniqueResults = Array.from(new Set(results.map(r => r.url)))
             .map(url => results.find(r => r.url === url));
@@ -4907,7 +4907,7 @@ document.addEventListener('DOMContentLoaded', function () {
   function updateSidebarDefaultBookmarkIndicator() {
     const defaultBookmarkId = localStorage.getItem('defaultBookmarkId');
     selectSidebarFolder(defaultBookmarkId);
-    
+
     const allCategories = document.querySelectorAll('#categories-list li');
     allCategories.forEach(category => {
       const indicator = category.querySelector('.default-indicator');
@@ -4961,8 +4961,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         // 添加新的书签
         bookmarks.forEach((bookmark, index) => {
-          const bookmarkElement = bookmark.url ? 
-            createBookmarkCard(bookmark, index) : 
+          const bookmarkElement = bookmark.url ?
+            createBookmarkCard(bookmark, index) :
             createFolderCard(bookmark, index);
           bookmarksList.appendChild(bookmarkElement);
         });
@@ -5051,7 +5051,7 @@ document.addEventListener('DOMContentLoaded', function () {
     if (isSearching || searchQueue.length === 0) {
       return;
     }
-    
+
     const query = searchQueue.shift();
     debouncedPerformSearch(query);
   }
@@ -5078,7 +5078,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 确保 URL 中包含查询参数占位符
-    const url = engineConfig.url.includes('%s') ? 
+    const url = engineConfig.url.includes('%s') ?
       engineConfig.url.replace('%s', encodeURIComponent(query)) :
       engineConfig.url + encodeURIComponent(query);
 
@@ -5139,10 +5139,10 @@ document.addEventListener('DOMContentLoaded', function () {
           .filter(item => {
             const key = `${item.url}|${item.text}`;
             if (uniqueItems.has(key)) return false;
-            
+
             domainCounts[item.domain] = (domainCounts[item.domain] || 0) + 1;
             if (domainCounts[item.domain] > maxPerDomain) return false;
-            
+
             uniqueItems.set(key, item);
             return true;
           })
@@ -5166,13 +5166,13 @@ document.addEventListener('DOMContentLoaded', function () {
     return new Promise((resolve) => {
       const startTime = new Date().getTime() - (30 * 24 * 60 * 60 * 1000); // 搜索最近30天的历史
       chrome.history.search(
-        { 
-          text: query, 
+        {
+          text: query,
           startTime: startTime,
-          maxResults: maxResults 
-        }, 
+          maxResults: maxResults
+        },
         (results) => {
-          
+
           // 对历史记录进行去重
           const uniqueResults = Array.from(new Set(results.map(r => r.url)))
             .map(url => results.find(r => r.url === url));
@@ -5542,7 +5542,7 @@ document.addEventListener('DOMContentLoaded', function () {
     allSuggestions = suggestions;
     displayedSuggestions = 0;
     searchSuggestions.innerHTML = '';
-  
+
     const searchForm = document.querySelector('.search-form');
     searchForm.classList.add('focused-with-suggestions');
 
@@ -5640,8 +5640,8 @@ document.addEventListener('DOMContentLoaded', function () {
 </svg>`;
     // 限制建议文本的长度
     const maxTextLength = 20; // 你可以根据需要调整这个值
-    const truncatedText = suggestion.text.length > maxTextLength 
-      ? suggestion.text.substring(0, maxTextLength) + '...' 
+    const truncatedText = suggestion.text.length > maxTextLength
+      ? suggestion.text.substring(0, maxTextLength) + '...'
       : suggestion.text;
 
     li.innerHTML = `
@@ -5665,14 +5665,14 @@ document.addEventListener('DOMContentLoaded', function () {
         // 根据设置决定打开方式
         chrome.storage.sync.get('openSearchInNewTab', (result) => {
           const openInNewTab = result.openSearchInNewTab !== false; // 默认为 true
-          
+
           if (openInNewTab) {
             window.open(suggestion.url, '_blank');
           } else {
             window.location.href = suggestion.url;
           }
         });
-        
+
         await saveUserBehavior(suggestion.url);
       } else {
         searchInput.value = suggestion.text;
@@ -5778,7 +5778,7 @@ document.addEventListener('DOMContentLoaded', function () {
       const recentBookmarks = await new Promise(resolve => {
         chrome.bookmarks.getRecent(10, resolve);
       });
-      
+
       suggestions = suggestions.concat(recentBookmarks.map(item => ({
         text: item.title,
         url: item.url,
@@ -5800,7 +5800,7 @@ document.addEventListener('DOMContentLoaded', function () {
   const handleInput = debounce(async () => {
     const query = searchInput.value.trim();
     showLoadingIndicator();
-    
+
     if (query) {
       const suggestions = await getSuggestions(query);
       hideLoadingIndicator();
@@ -5817,7 +5817,7 @@ document.addEventListener('DOMContentLoaded', function () {
   searchInput.addEventListener('focus', async () => {
     const searchForm = document.querySelector('.search-form');
     searchForm.classList.add('focused');
-    
+
     if (searchInput.value.trim() === '') {
       await showDefaultSuggestions();
     } else {
@@ -6003,7 +6003,7 @@ document.addEventListener('DOMContentLoaded', function() {
       contextMenu.style.display = 'none';
       currentBookmark = null;
     }
-    
+
     // 关闭文件夹上下文菜单
     if (bookmarkFolderContextMenu) {
       bookmarkFolderContextMenu.style.display = 'none';
@@ -6068,7 +6068,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // 侧边栏的文件夹
         folderName = folder.dataset.title || folder.textContent.trim();
     }
-    
+
     console.log('Toggle default folder:', {
         folderId,
         folderName,
@@ -6151,11 +6151,11 @@ document.addEventListener('DOMContentLoaded', function() {
 function setVersionNumber() {
   const manifest = chrome.runtime.getManifest();
   const versionElement = document.querySelector('.about-version');
-  
+
   if (versionElement && manifest) {
     // 移除 data-i18n 属性，因为我们要直接设置完整的本地化文本
     versionElement.removeAttribute('data-i18n');
-    
+
     // 获取本地化的版本号文本并设置
     const versionText = chrome.i18n.getMessage('version', [manifest.version]);
     versionElement.textContent = versionText;
@@ -6206,7 +6206,7 @@ function openSettingsModal() {
   // 修改为打开侧边栏
   const settingsSidebar = document.getElementById('settings-sidebar');
   const settingsOverlay = document.getElementById('settings-overlay');
-  
+
   if (settingsSidebar && settingsOverlay) {
     settingsSidebar.classList.add('open');
     settingsOverlay.classList.add('open');
@@ -6219,7 +6219,7 @@ function openSettingsModal() {
 // 确保在 DOMContentLoaded 事件中初始化设置图标点击事件
 document.addEventListener('DOMContentLoaded', function() {
   // ... 其他初始化代码 ...
-  
+
   // 设置图标点击事件
   const settingsIcon = document.querySelector('.settings-icon a');
   if (settingsIcon) {
@@ -6228,26 +6228,26 @@ document.addEventListener('DOMContentLoaded', function() {
       openSettingsModal();
     });
   }
-  
+
   // 关闭按钮点击事件
   const closeButton = document.querySelector('.settings-sidebar-close');
   if (closeButton) {
     closeButton.addEventListener('click', function() {
       const settingsSidebar = document.getElementById('settings-sidebar');
       const settingsOverlay = document.getElementById('settings-overlay');
-      
+
       settingsSidebar.classList.remove('open');
       settingsOverlay.classList.remove('open');
       document.body.style.overflow = ''; // 恢复背景滚动
     });
   }
-  
+
   // 遮罩层点击事件
   const settingsOverlay = document.getElementById('settings-overlay');
   if (settingsOverlay) {
     settingsOverlay.addEventListener('click', function() {
       const settingsSidebar = document.getElementById('settings-sidebar');
-      
+
       settingsSidebar.classList.remove('open');
       settingsOverlay.classList.remove('open');
       document.body.style.overflow = ''; // 恢复背景滚动
@@ -6259,9 +6259,9 @@ document.addEventListener('DOMContentLoaded', function() {
 function initScrollIndicator() {
   const bookmarksContainer = document.querySelector('.bookmarks-container');
   const bookmarksList = document.getElementById('bookmarks-list');
-  
+
   if (!bookmarksContainer || !bookmarksList) return;
-  
+
   // 创建滚动指示器
   const scrollIndicator = document.createElement('div');
   scrollIndicator.className = 'scroll-indicator';
@@ -6272,15 +6272,15 @@ function initScrollIndicator() {
     </svg>
   `;
   bookmarksContainer.appendChild(scrollIndicator);
-  
+
   // 滚动状态变量
   let scrollTimeout;
   let isScrolling = false;
-  
+
   // 检查是否需要滚动
   function checkScrollable() {
     const isScrollable = bookmarksList.scrollHeight > bookmarksList.clientHeight;
-    
+
     if (isScrollable) {
       scrollIndicator.style.display = 'flex';
       // 添加动画类
@@ -6295,7 +6295,7 @@ function initScrollIndicator() {
       scrollIndicator.style.display = 'none';
     }
   }
-  
+
   // 监听滚动事件
   bookmarksList.addEventListener('scroll', () => {
     // 如果已经滚动到底部，隐藏指示器
@@ -6305,28 +6305,28 @@ function initScrollIndicator() {
     } else {
       scrollIndicator.style.opacity = '';
     }
-    
+
     // 添加滚动中的类
     if (!isScrolling) {
       isScrolling = true;
       bookmarksList.classList.add('scrolling');
     }
-    
+
     // 清除之前的定时器
     clearTimeout(scrollTimeout);
-    
+
     // 设置新的定时器，滚动停止1.5秒后移除滚动中的类
     scrollTimeout = setTimeout(() => {
       isScrolling = false;
       bookmarksList.classList.remove('scrolling');
     }, 1500);
   });
-  
+
   // 鼠标进入书签列表时，如果可滚动，添加滚动中的类
   bookmarksList.addEventListener('mouseenter', () => {
     if (bookmarksList.scrollHeight > bookmarksList.clientHeight) {
       bookmarksList.classList.add('scrolling');
-      
+
       // 鼠标离开时，如果不在滚动，移除滚动中的类
       const handleMouseLeave = () => {
         if (!isScrolling) {
@@ -6334,19 +6334,19 @@ function initScrollIndicator() {
         }
         bookmarksList.removeEventListener('mouseleave', handleMouseLeave);
       };
-      
+
       bookmarksList.addEventListener('mouseleave', handleMouseLeave);
     }
   });
-  
+
   // 初始检查和窗口大小变化时重新检查
   checkScrollable();
   window.addEventListener('resize', _.debounce(checkScrollable, 200));
-  
+
   // 当书签列表内容变化时重新检查
   const observer = new MutationObserver(_.debounce(checkScrollable, 200));
   observer.observe(bookmarksList, { childList: true, subtree: true });
-  
+
   // 点击指示器滚动到下一屏
   scrollIndicator.addEventListener('click', () => {
     const currentScroll = bookmarksList.scrollTop;
@@ -6355,14 +6355,14 @@ function initScrollIndicator() {
       top: nextScroll,
       behavior: 'smooth'
     });
-    
+
     // 点击时添加滚动中的类
     bookmarksList.classList.add('scrolling');
     isScrolling = true;
-    
+
     // 清除之前的定时器
     clearTimeout(scrollTimeout);
-    
+
     // 设置新的定时器
     scrollTimeout = setTimeout(() => {
       isScrolling = false;
@@ -6374,11 +6374,11 @@ function initScrollIndicator() {
   bookmarksList.addEventListener('touchstart', () => {
     bookmarksList.classList.add('scrolling');
     isScrolling = true;
-    
+
     // 清除之前的定时器
     clearTimeout(scrollTimeout);
   });
-  
+
   bookmarksList.addEventListener('touchend', () => {
     // 设置新的定时器，触摸结束后1.5秒移除滚动中的类
     clearTimeout(scrollTimeout);
@@ -6387,7 +6387,7 @@ function initScrollIndicator() {
       bookmarksList.classList.remove('scrolling');
     }, 1500);
   });
-  
+
   // 初始检查和窗口大小变化时重新检查
 }
 
@@ -6395,10 +6395,10 @@ function initScrollIndicator() {
 document.addEventListener('DOMContentLoaded', function() {
   // 初始化虚拟滚动
   initVirtualScroll();
-  
+
   // 初始化滚动指示器
   initScrollIndicator();
-  
+
   // 其他初始化代码...
   startPeriodicSync();
 });

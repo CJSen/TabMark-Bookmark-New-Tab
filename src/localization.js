@@ -6,13 +6,13 @@ function getUserLanguage() {
 window.getLocalizedMessage = function(messageName) {
   const userLang = getUserLanguage();
   let message = chrome.i18n.getMessage(messageName);
-  
+
   // 如果没有找到消息，直接返回消息名称
   if (!message) {
     // console.warn(`No localized message found for: ${messageName}`); // 日志已移除
     return messageName;
   }
-  
+
   // console.log(`Getting localized message for ${messageName}:`, message); // 日志已移除
   return message;
 };

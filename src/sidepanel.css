@@ -419,21 +419,21 @@ body.nav-compact-mode .side-panel-iframe {
     background-color: rgba(32, 33, 36, 0.95);
     border-bottom-color: #3c4043;
   }
-  
+
   .side-panel-nav button {
     color: #e8eaed;
   }
-  
+
   .side-panel-nav button:hover {
     background-color: #3c4043;
   }
-  
+
   .side-panel-nav .url-input {
     background-color: #202124;
     border-color: #3c4043;
     color: #e8eaed;
   }
-  
+
   .toggle-compact-btn {
     background-color: rgba(32, 33, 36, 0.95);
     border-color: #3c4043;
@@ -462,4 +462,4 @@ body.nav-compact-mode .side-panel-iframe {
 /* 当导航栏处于紧凑模式时，调整页面内容位置 */
 body.nav-compact-mode {
   margin-top: 4px !important;
-} 
+}

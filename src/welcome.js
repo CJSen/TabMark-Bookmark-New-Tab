@@ -15,13 +15,13 @@ const WelcomeManager = {
             if (welcomeElement) {
                 // 立即设置显示状态，避免闪烁
                 welcomeElement.style.display = result.showWelcomeMessage !== false ? '' : 'none';
-                
+
                 // 只有在需要显示时才更新内容
                 if (result.showWelcomeMessage !== false) {
                     this.updateWelcomeMessage(false); // 传入false表示不再检查显示状态
                 }
             }
-            
+
             // 继续其他初始化
             this.initializeColorCache();
             this.setupEventListeners();
@@ -34,7 +34,7 @@ const WelcomeManager = {
         const now = new Date();
         const hours = now.getHours();
         let greeting;
-        
+
         if (hours < 12) {
             greeting = window.getLocalizedMessage('morningGreeting');
         } else if (hours < 18) {
@@ -47,14 +47,14 @@ const WelcomeManager = {
         const welcomeElement = document.getElementById('welcome-message');
         if (welcomeElement) {
             welcomeElement.textContent = welcomeMessage;
-            
+
             // 只有在需要时才检查显示状态
             if (checkVisibility) {
                 chrome.storage.sync.get(['showWelcomeMessage'], (result) => {
                     welcomeElement.style.display = result.showWelcomeMessage !== false ? '' : 'none';
                 });
             }
-            
+
             this.adjustTextColor(welcomeElement);
         }
     },
@@ -64,7 +64,7 @@ const WelcomeManager = {
         const computedStyle = window.getComputedStyle(document.documentElement);
         const backgroundColor = computedStyle.backgroundColor;
         const backgroundImage = document.body.style.backgroundImage;
-        
+
         // 计算初始文字颜色
         if (backgroundColor && backgroundColor !== 'rgba(0, 0, 0, 0)' && backgroundColor !== 'transparent') {
             const rgb = backgroundColor.match(/\d+/g);
@@ -73,9 +73,9 @@ const WelcomeManager = {
                 this.colorCache.lastTextColor = brightness > 128 ? 'rgba(51, 51, 51, 0.9)' : 'rgba(255, 255, 255, 0.9)';
             }
         }
-        
+
         this.colorCache.lastBackground = backgroundImage !== 'none' ? backgroundImage : backgroundColor;
-        
+
         // 应用初始颜色
         const welcomeElement = document.getElementById('welcome-message');
         if (welcomeElement) {
@@ -89,7 +89,7 @@ const WelcomeManager = {
         const backgroundColor = computedStyle.backgroundColor;
         const backgroundImage = document.body.style.backgroundImage;
         const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark';
-        
+
         // 处理纯色背景的情况
         if (!backgroundImage || backgroundImage === 'none') {
             // 如果是暗色模式，直接使用亮色文本
@@ -98,10 +98,10 @@ const WelcomeManager = {
                 this.colorCache.lastTextColor = 'rgba(255, 255, 255, 0.9)';
                 return;
             }
-            
+
             // 亮色模式下，根据背景色计算文字颜色
             let textColor = 'rgba(51, 51, 51, 0.9)'; // 默认深色文本
-            
+
             if (backgroundColor && backgroundColor !== 'rgba(0, 0, 0, 0)' && backgroundColor !== 'transparent') {
                 const rgb = backgroundColor.match(/\d+/g);
                 if (rgb && rgb.length >= 3) {
@@ -109,7 +109,7 @@ const WelcomeManager = {
                     textColor = brightness > 128 ? 'rgba(51, 51, 51, 0.9)' : 'rgba(255, 255, 255, 0.9)';
                 }
             }
-            
+
             this.colorCache.lastTextColor = textColor;
             element.style.color = textColor;
             return;
@@ -125,12 +125,12 @@ const WelcomeManager = {
                 // 只有在没有缓存时才设置临时的白色文本
                 element.style.color = 'rgba(255, 255, 255, 0.9)';
             }
-            
+
             // 进行新的计算...
             const img = new Image();
             img.crossOrigin = "Anonymous";
             img.src = backgroundImage.slice(5, -2);
-            
+
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 const ctx = canvas.getContext('2d');
@@ -138,7 +138,7 @@ const WelcomeManager = {
 
                 // 获取欢迎文字元素的位置和尺寸
                 const elementRect = element.getBoundingClientRect();
-                
+
                 // 计算采样区域
                 const sampleArea = {
                     x: Math.max(0, elementRect.x),
@@ -154,7 +154,7 @@ const WelcomeManager = {
                 // 计算图片在背景中的实际尺寸和位置
                 const backgroundSize = getComputedStyle(document.body).backgroundSize;
                 const backgroundPosition = getComputedStyle(document.body).backgroundPosition;
-                
+
                 // 计算图片的缩放比例
                 const scale = {
                     x: img.width / window.innerWidth,
@@ -201,10 +201,10 @@ const WelcomeManager = {
                         brightness
                     });
 
-                    const textColor = brightness > 128 ? 
-                        'rgba(51, 51, 51, 0.9)' : 
+                    const textColor = brightness > 128 ?
+                        'rgba(51, 51, 51, 0.9)' :
                         'rgba(255, 255, 255, 0.9)';
-                    
+
                     // 更新缓存和应用颜色
                     this.colorCache.lastBackground = backgroundImage;
                     this.colorCache.lastTextColor = textColor;
@@ -253,14 +253,14 @@ const WelcomeManager = {
                     if (mutation.type === 'childList' || mutation.type === 'characterData') {
                         const currentText = welcomeElement.textContent;
                         // 检查是否缺少用户名
-                        if (currentText && !currentText.includes(userName) && 
+                        if (currentText && !currentText.includes(userName) &&
                             (currentText.includes('早上好') || currentText.includes('下午好') || currentText.includes('晚上好'))) {
                             this.updateWelcomeMessage();
                         }
                     }
                 });
             });
-            
+
             observer.observe(welcomeElement, {
                 childList: true,
                 characterData: true,

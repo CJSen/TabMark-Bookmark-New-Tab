@@ -71,7 +71,7 @@ class FeatureTips {
         // 移除内联样式和之前添加的类
         tipContainer.style.cssText = '';
         tipContainer.classList.remove('tip-fade-out');
-        
+
         // 移除 !important 样式的影响
         const style = document.getElementById('feature-tips-style');
         if (style) {
@@ -82,7 +82,7 @@ class FeatureTips {
         tipContainer.style.display = 'block';
         tipContainer.style.opacity = '0';
         tipContainer.style.visibility = 'visible';
-        
+
         // 强制重排以确保样式生效
         void tipContainer.offsetHeight;
     }
@@ -93,10 +93,10 @@ class FeatureTips {
             // 获取当前版本号
             this.currentVersion = await this.getExtensionVersion();
             console.log('[FeatureTips] 当前版本:', this.currentVersion);
-            
+
             // 检查版本更新
             await this.checkVersionUpdate();
-            
+
             // 开始处理提示队列
             setTimeout(() => {
                 this.processNextTip();
@@ -200,7 +200,7 @@ class FeatureTips {
         }
 
         console.log('[FeatureTips] 处理下一个提示, 队列长度:', this.tipQueue.length, '是否正在显示:', this.isShowingTip);
-        
+
         if (this.isShowingTip || this.tipQueue.length === 0) {
             // 如果没有新功能提示或已经显示完，检查是否需要显示设置提示
             if (!this.isShowingTip && this.tipQueue.length === 0 && !this.hasCheckedSettingsTip) {
@@ -214,7 +214,7 @@ class FeatureTips {
         this.isProcessing = true;
         const { featureKey, storageKey } = this.tipQueue.shift();
         this.isShowingTip = true;
-        
+
         requestAnimationFrame(() => {
             this.showTips(featureKey);
             localStorage.setItem(storageKey, 'true');
@@ -298,10 +298,10 @@ class FeatureTips {
             return;
         }
         this.tipsInitialized = true;
-        
+
         // 重置检查状态
         this.hasCheckedSettingsTip = false;
-        
+
         // 确保DOM已完全加载
         if (!this.domReady || !this.pageLoaded) {
             return;
@@ -309,7 +309,7 @@ class FeatureTips {
 
         // 预先隐藏所有提示
         this.hideAllTipsImmediately();
-        
+
         // 开始检查提示
         this.startTipsCheck();
     }
@@ -319,22 +319,22 @@ class FeatureTips {
         if (this.isShowingTip || !this.domReady || !this.pageLoaded) {
             return;
         }
-        
+
         // 检查localStorage，如果已经显示过，直接返回
         if (localStorage.getItem('settingsUpdateTipShown') === 'true') {
             this.isShowingTip = false;
             this.isProcessing = false;
             return;
         }
-        
+
         this.isShowingTip = true;
         const tipContainer = document.querySelector('.settings-update-tip');
         if (tipContainer) {
             console.log('[FeatureTips] 显示设置更新提示');
-            
+
             // 重置提示样式
             this.resetTipStyle(tipContainer);
-            
+
             // 使用 requestAnimationFrame 和 setTimeout 确保动画平滑
             requestAnimationFrame(() => {
                 setTimeout(() => {
@@ -346,7 +346,7 @@ class FeatureTips {
             if (closeButton) {
                 const newCloseButton = closeButton.cloneNode(true);
                 closeButton.parentNode.replaceChild(newCloseButton, closeButton);
-                
+
                 newCloseButton.addEventListener('click', () => {
                     tipContainer.classList.add('tip-fade-out');
                     tipContainer.style.opacity = '0';

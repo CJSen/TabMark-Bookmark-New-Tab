@@ -2,19 +2,19 @@
   function getSelectedText() {
     const selection = window.getSelection();
     const selectedText = selection.toString().trim();
-    
+
     // 检查选区是否包含扩展的 Shadow DOM
     if (selection.rangeCount > 0) {
       const range = selection.getRangeAt(0);
       const container = range.commonAncestorContainer;
-      
+
       // 如果选区在扩展的 Shadow DOM 内，返回空字符串
-      if (extensionContainer.contains(container) || 
+      if (extensionContainer.contains(container) ||
           (shadow && shadow.contains(container))) {
         return '';
       }
     }
-    
+
     return selectedText;
   }
 
@@ -86,7 +86,7 @@
       // 2. 获取默认文件夹列表
       const { defaultFolders } = await chrome.storage.sync.get('defaultFolders');
       const { lastViewedFolder } = await chrome.storage.local.get('lastViewedFolder');
-      
+
       let folderToShow = null;
       let folderContents = [];
 
@@ -94,21 +94,21 @@
       if (defaultFolders?.items?.length > 0) {
         // 检查上次访问的文件夹是否在默认文件夹列表中
         let folderToActivate;
-        
+
         if (lastViewedFolder && defaultFolders.items.some(f => f.id === lastViewedFolder)) {
           folderToActivate = lastViewedFolder;
         } else {
           // 否则使用第一个默认文件夹
           folderToActivate = defaultFolders.items[0].id;
         }
-        
+
         try {
           // 通过消息传递获取文件夹信息
-          const response = await chrome.runtime.sendMessage({ 
-            action: 'getBookmarkFolder', 
-            folderId: folderToActivate 
+          const response = await chrome.runtime.sendMessage({
+            action: 'getBookmarkFolder',
+            folderId: folderToActivate
           });
-          
+
           if (response.success && response.folder) {
             folderToShow = response.folder;
             if (response.children) {
@@ -124,11 +124,11 @@
       if (!folderToShow) {
         try {
           // 通过消息传递获取根文件夹信息
-          const response = await chrome.runtime.sendMessage({ 
-            action: 'getBookmarkFolder', 
-            folderId: '1' 
+          const response = await chrome.runtime.sendMessage({
+            action: 'getBookmarkFolder',
+            folderId: '1'
           });
-          
+
           if (response.success && response.folder) {
             folderToShow = response.folder;
             if (response.children) {
@@ -340,7 +340,7 @@
   floatingButton.addEventListener('click', (event) => {
     if (event.altKey) {
       // Alt + 点击打开侧边栏
-      chrome.runtime.sendMessage({ 
+      chrome.runtime.sendMessage({
         action: 'openSidePanel'
       }, (response) => {
         if (chrome.runtime.lastError) {
@@ -476,7 +476,7 @@
 
     aside ul li {
       display: flex;
-      position: relative; 
+      position: relative;
       font-size: 14px;
       font-weight: 600;
       color: #1a202c;
@@ -955,17 +955,17 @@
       user-select: none;
       -webkit-user-select: none;
     }
-    
+
     #bookmark-list {
       user-select: none;
       -webkit-user-select: none;
     }
-    
+
     .bookmark-link, .bookmark-title {
       user-select: none;
       -webkit-user-select: none;
     }
-    
+
     #search-switcher {
       user-select: none;
       -webkit-user-select: none;
@@ -975,16 +975,16 @@
   shadow.appendChild(style);
 
   function openSidePanel() {
-    chrome.runtime.sendMessage({ 
+    chrome.runtime.sendMessage({
       action: 'openSidePanel'
     }, (response) => {
       if (chrome.runtime.lastError || !response?.success) {
-        console.error('Failed to open side panel:', 
+        console.error('Failed to open side panel:',
           chrome.runtime.lastError?.message || response?.error || 'Unknown error');
-          
+
         // 如果失败，尝试延迟重试一次
         setTimeout(() => {
-          chrome.runtime.sendMessage({ 
+          chrome.runtime.sendMessage({
             action: 'openSidePanel',
             retry: true
           });

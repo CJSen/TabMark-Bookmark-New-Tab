@@ -51,7 +51,7 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "_favicon/*", 
+        "_favicon/*",
         "src/fonts/*",
         "images/sider-icon/*",
         "images/*"

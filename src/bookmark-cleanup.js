@@ -42,4 +42,4 @@ document.addEventListener('DOMContentLoaded', () => {
   initBookmarkCleanupSettings();
 });
 
-export {}; 
+export {};

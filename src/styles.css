@@ -486,7 +486,7 @@ main {
     opacity: 1;
 }
 
-.wallpaper-actions {  
+.wallpaper-actions {
     margin-top: 12px;
     gap: 12px;
     align-items: center;
@@ -1657,7 +1657,7 @@ body .default-folders-tabs.sidebar-expanded {
   .settings-sidebar .settings-layout {
     flex-direction: column;
   }
-  
+
   .settings-sidebar-nav {
     width: 100%;
     border-right: none;
@@ -1666,11 +1666,11 @@ body .default-folders-tabs.sidebar-expanded {
     padding-bottom: 15px;
     margin-bottom: 15px;
   }
-  
+
   .settings-sidebar .settings-content {
     padding-left: 0;
   }
-  
+
   [data-theme="dark"] .settings-sidebar-nav {
     border-bottom-color: #333333;
   }

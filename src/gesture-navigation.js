@@ -16,7 +16,7 @@ let hasNavigated = false; // 添加标志，防止一次滑动触发多次导航
 // 导航函数
 function navigateToParent(currentFolderId, updateDisplay) {
   const now = Date.now();
-  
+
   // 只检查导航状态，移除时间锁定检查
   if (isNavigating) {
     console.log('[Navigation] Skipped - navigation in progress');
@@ -36,7 +36,7 @@ function navigateToParent(currentFolderId, updateDisplay) {
     if (nodes && nodes[0] && nodes[0].parentId) {
       const parentId = nodes[0].parentId;
       console.log('[Navigation] Navigating to parent folder:', parentId);
-      
+
       if (parentId === "0") {
         updateDisplay("1").finally(() => {
           setTimeout(() => {
@@ -79,7 +79,7 @@ function initTouchGestures(navigateToParent) {
       touchStartY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
       swipeStartTime = Date.now();
       hasNavigated = false; // 每次触摸开始时重置标志
-      
+
       document.body.style.transition = 'transform 0.2s';
     }
   });
@@ -90,7 +90,7 @@ function initTouchGestures(navigateToParent) {
 
     const currentX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
     const deltaX = currentX - touchStartX;
-    
+
     // 进一步降低跟手程度
     if (deltaX > 0) {
       const transform = Math.min(deltaX / 6, 150); // 大幅降低位移比例，增加最大位移
@@ -111,11 +111,11 @@ function initTouchGestures(navigateToParent) {
     document.body.style.transition = 'transform 0.3s';
     document.body.style.transform = '';
 
-    if (Math.abs(deltaX) > Math.abs(deltaY) && 
-        deltaX > minSwipeDistance && 
+    if (Math.abs(deltaX) > Math.abs(deltaY) &&
+        deltaX > minSwipeDistance &&
         Math.abs(deltaY) < minSwipeDistance / 4 && // 进一步降低垂直容差
         swipeTime > 150 && swipeTime < 1000) { // 扩大时间窗口
-      
+
       const currentFolderId = document.getElementById('bookmarks-list').dataset.parentId;
       if (currentFolderId && currentFolderId !== '1' && !hasNavigated) {
         navigateToParent(currentFolderId);
@@ -134,7 +134,7 @@ function createWheelHandler(navigateToParent) {
 
   return _.throttle(function(e) {
     const currentTime = Date.now();
-    
+
     if (currentTime - lastNavigationTime < NAVIGATION_COOLDOWN) {
       return;
     }
@@ -142,22 +142,22 @@ function createWheelHandler(navigateToParent) {
     const SCROLL_THRESHOLD = isWindows ? 30 : 60; // 进一步增加滚动阈值
     const MIN_DELTA_Y = isWindows ? 20 : 45;
     const HORIZONTAL_RATIO = isWindows ? 1.8 : 2.0; // 显著增加水平比率要求
-    
+
     accumulatedDeltaX += e.deltaX;
-    
+
     if (currentTime - lastWheelTime > 400) { // 增加重置时间窗口
       accumulatedDeltaX = e.deltaX;
     }
     lastWheelTime = currentTime;
 
-    if (Math.abs(accumulatedDeltaX) > SCROLL_THRESHOLD && 
-        Math.abs(e.deltaX) > Math.abs(e.deltaY) * HORIZONTAL_RATIO && 
-        Math.abs(e.deltaY) < MIN_DELTA_Y && 
-        e.deltaX < 0 && 
-        e.deltaMode === 0) { 
-      
+    if (Math.abs(accumulatedDeltaX) > SCROLL_THRESHOLD &&
+        Math.abs(e.deltaX) > Math.abs(e.deltaY) * HORIZONTAL_RATIO &&
+        Math.abs(e.deltaY) < MIN_DELTA_Y &&
+        e.deltaX < 0 &&
+        e.deltaMode === 0) {
+
       if (isWindows && e.deltaMode !== 0) return;
-      
+
       const currentFolderId = document.getElementById('bookmarks-list').dataset.parentId;
       if (currentFolderId && currentFolderId !== '1') {
         navigateToParent(currentFolderId);
@@ -187,7 +187,7 @@ function initWindowsTouchpad(navigateToParent) {
     const deltaY = e.clientY - touchStartY;
     const MIN_SWIPE_DISTANCE = 220; // 显著增加最小滑动距离
 
-    if (Math.abs(deltaX) > MIN_SWIPE_DISTANCE && 
+    if (Math.abs(deltaX) > MIN_SWIPE_DISTANCE &&
         Math.abs(deltaX) > Math.abs(deltaY) * 2.0 && // 显著增加比率要求
         deltaX < 0) {
       const currentFolderId = document.getElementById('bookmarks-list').dataset.parentId;
@@ -209,11 +209,11 @@ function initGestureNavigation(updateDisplay) {
 
   // 初始化触摸板手势，传入导航函数
   initTouchGestures(boundNavigateToParent);
-  
+
   // 初始化滚轮事件，使用新的处理函数
   const boundWheelHandler = createWheelHandler(boundNavigateToParent);
   document.addEventListener('wheel', boundWheelHandler, { passive: true });
-  
+
   // 如果是 Windows，初始化 Windows 触摸板支持
   if (isWindows) {
     initWindowsTouchpad(boundNavigateToParent);
@@ -222,4 +222,4 @@ function initGestureNavigation(updateDisplay) {
 
 export {
   initGestureNavigation
-}; 
+};

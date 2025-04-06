@@ -13,7 +13,7 @@ const ALL_ENGINES = [
   { name: 'metaso', icon: '../images/metaso-logo.png', label: 'metasoLabel', url: 'https://metaso.cn/?q=', aliases: ['Metaso'] },
   { name: 'perplexity', icon: '../images/perplexity-logo.svg', label: 'perplexityLabel', url: 'https://www.perplexity.ai/?q=', aliases: ['Perplexity'] },
   { name: 'semanticscholar', icon: '../images/semanticscholar-logo.png', label: 'semanticscholarLabel', url: 'https://www.semanticscholar.org/search?q=', aliases: ['Semantic Scholar'] },
-  { name: 'deepseek', icon: '../images/deepseek-logo.svg', label: 'deepseekLabel', url: 'https://chat.deepseek.com/?q=', aliases: ['DeepSeek'] },  
+  { name: 'deepseek', icon: '../images/deepseek-logo.svg', label: 'deepseekLabel', url: 'https://chat.deepseek.com/?q=', aliases: ['DeepSeek'] },
   { name: 'grok', icon: '../images/grok-logo.svg', label: 'grokLabel', url: 'https://grok.com/?q=', aliases: ['Grok'] },
   { name: 'yahoo', icon: '../images/yahoo-logo.svg', label: 'yahooLabel', url: 'https://search.yahoo.com/search?p=', aliases: ['雅虎'] },
   { name: 'duckduckgo', icon: '../images/duckduckgo-logo.svg', label: 'duckduckgoLabel', url: 'https://duckduckgo.com/?q=', aliases: ['DuckDuckGo'] },
@@ -86,7 +86,7 @@ const SearchEngineManager = {
   getDefaultEngine() {
     const defaultEngineName = localStorage.getItem('selectedSearchEngine');
     console.log('[Search] Getting default engine, stored name:', defaultEngineName);
-    
+
     if (defaultEngineName) {
       const allEngines = this.getAllEngines();
       const engine = allEngines.find(e => e.name === defaultEngineName);
@@ -103,7 +103,7 @@ const SearchEngineManager = {
   setDefaultEngine(engineName) {
     const allEngines = this.getAllEngines();
     const engine = allEngines.find(e => e.name === engineName);
-    
+
     if (engine) {
       console.log('[Search] Setting default engine to:', engine);
       localStorage.setItem('selectedSearchEngine', engineName);
@@ -118,7 +118,7 @@ const SearchEngineManager = {
 function createSearchEngineOption(engine, isAddButton = false) {
   const option = document.createElement('div');
   option.className = 'search-engine-option';
-  
+
   if (isAddButton) {
     option.innerHTML = `
       <div class="search-engine-option-content add-engine">
@@ -146,7 +146,7 @@ function createSearchEngineOption(engine, isAddButton = false) {
 // 处理搜索引擎选择
 function handleSearchEngineSelection(engine) {
   console.log('[Search] Selecting engine:', engine);
-  
+
   // 关闭下拉菜单
   const dropdownContainer = document.querySelector('.search-engine-dropdown');
   if (dropdownContainer) {
@@ -156,7 +156,7 @@ function handleSearchEngineSelection(engine) {
   // 使用 SearchEngineManager 设置默认搜索引擎
   if (SearchEngineManager.setDefaultEngine(engine.name)) {
     console.log('[Search] Default engine set to:', engine);
-    
+
     // 更新搜索引擎图标
     updateSearchEngineIcon(engine);
 
@@ -183,10 +183,10 @@ function handleSearchEngineSelection(engine) {
 function updateTabsState(engineName) {
   const defaultEngine = engineName.toLowerCase();
   const tabs = document.querySelectorAll('.tab');
-  
+
   // 先移除所有 active 类
   tabs.forEach(tab => tab.classList.remove('active'));
-  
+
   // 尝试找到对应的标签并添加 active 类
   const matchingTab = Array.from(tabs).find(tab => {
     const tabEngine = tab.getAttribute('data-engine').toLowerCase();
@@ -202,7 +202,7 @@ function updateTabsState(engineName) {
 // 修改初始化函数
 function initializeSearchEngine() {
   console.log('[Search] Initializing search engine');
-  
+
   // 确保 DOM 已经加载完成
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
@@ -217,30 +217,30 @@ function initializeSearchEngine() {
 function initializeSearchEngineUI() {
   const defaultEngine = SearchEngineManager.getDefaultEngine();
   console.log('[Search] Default engine:', defaultEngine);
-  
+
   if (defaultEngine) {
     console.log('[Search] Updating UI for engine:', defaultEngine.name);
-    
+
     // 确保搜索表单和图标元素存在
     const searchForm = document.querySelector('.search-form');
     const searchEngineIcon = document.getElementById('search-engine-icon');
-    
+
     if (searchForm && searchEngineIcon) {
       // 更新搜索引擎图标
       updateSearchEngineIcon(defaultEngine);
-      
+
       // 更新标签栏状态
       updateTabsState(defaultEngine.name);
-      
+
       // 更新搜索表单中的默认搜索引擎
       searchForm.setAttribute('data-current-engine', defaultEngine.name);
-      
+
       // 确保图标正确加载
       if (searchEngineIcon.src !== defaultEngine.icon) {
         searchEngineIcon.src = defaultEngine.icon;
         searchEngineIcon.alt = `${getLocalizedMessage(defaultEngine.label)} Search`;
       }
-      
+
       console.log('[Search] UI successfully updated for engine:', defaultEngine.name);
     } else {
       console.error('[Search] Required DOM elements not found');
@@ -255,7 +255,7 @@ function getSearchUrl(engine, query) {
   const allEngines = SearchEngineManager.getAllEngines();
   const engineConfig = allEngines.find(e => {
     // 匹配引擎名称或别名
-    return e.name.toLowerCase() === engine.toLowerCase() || 
+    return e.name.toLowerCase() === engine.toLowerCase() ||
            (e.aliases && e.aliases.some(alias => alias.toLowerCase() === engine.toLowerCase()));
   });
 
@@ -266,7 +266,7 @@ function getSearchUrl(engine, query) {
   }
 
   // 确保 URL 中包含查询参数占位符
-  const url = engineConfig.url.includes('%s') ? 
+  const url = engineConfig.url.includes('%s') ?
     engineConfig.url.replace('%s', encodeURIComponent(query)) :
     engineConfig.url + encodeURIComponent(query);
 
@@ -294,7 +294,7 @@ function createTemporarySearchTabs() {
     const tab = document.createElement('div');
     tab.className = 'tab';
     tab.setAttribute('data-engine', engine.name);
-    
+
     if (engine.name === defaultEngine.name) {
       tab.classList.add('active');
     }
@@ -309,7 +309,7 @@ function createTemporarySearchTabs() {
     tab.addEventListener('click', function() {
       const searchInput = document.querySelector('.search-input');
       const searchQuery = searchInput.value.trim();
-      
+
       if (searchQuery) {
         // 移除所有标签的激活状态
         tabsContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -319,13 +319,13 @@ function createTemporarySearchTabs() {
         // 执行搜索
         const searchUrl = getSearchUrl(engine.name, searchQuery);
         window.open(searchUrl, '_blank');
-        
+
         // 隐藏搜索建议
         const searchSuggestions = document.querySelector('.search-suggestions-wrapper');
         if (searchSuggestions) {
           searchSuggestions.style.display = 'none';
         }
-        
+
         // 延迟恢复默认搜索引擎状态
         setTimeout(() => {
           const defaultEngine = SearchEngineManager.getDefaultEngine();
@@ -347,7 +347,7 @@ function createTemporarySearchTabs() {
 // 修改 createSearchEngineDropdown 函数，添加对临时搜索标签的更新
 function createSearchEngineDropdown() {
   console.log('[Search] Creating dropdown menu');
-  
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       initializeSearchEngine();
@@ -368,7 +368,7 @@ function createDropdownUI() {
   if (existingDropdown) {
     existingDropdown.remove();
   }
-  
+
   const searchForm = document.querySelector('.search-form');
   const iconContainer = document.querySelector('.search-icon-container');
   const dropdownContainer = document.createElement('div');
@@ -452,7 +452,7 @@ function createSearchEnginesList() {
   const aiContainer = document.getElementById('ai-search-engines');
   const searchContainer = document.getElementById('search-engines');
   const socialContainer = document.getElementById('social-media-engines');
-  
+
   if (!aiContainer || !searchContainer || !socialContainer) return;
 
   // 清空所有容器的现有内容
@@ -471,7 +471,7 @@ function createSearchEnginesList() {
 
     const checkboxContainer = document.createElement('label');
     checkboxContainer.className = 'custom-checkbox';
-    
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = enabledEngineNames.includes(engine.name);
@@ -504,7 +504,7 @@ function createSearchEnginesList() {
     const toggleEngine = (e) => {
       // 获取实际的复选框元素
       const checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
-      
+
       // 排除删除按钮和复选框本身的点击
       if (e.target.closest('.delete-custom-engine') || e.target === checkbox) {
         return;
@@ -512,10 +512,10 @@ function createSearchEnginesList() {
 
       // 切换复选框状态
       checkbox.checked = !checkbox.checked;
-      
+
       // 触发change事件以同步状态
       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      
+
       // 更新样式和状态
       e.currentTarget.classList.toggle('selected', checkbox.checked);
       handleEngineToggle(engine, checkbox.checked);
@@ -523,7 +523,7 @@ function createSearchEnginesList() {
 
     // 为整个项目添加点击事件
     engineItem.addEventListener('click', toggleEngine);
-    
+
     // 移除复选框的点击事件阻止
     checkbox.addEventListener('change', (e) => {
       // 直接更新状态
@@ -625,12 +625,12 @@ function initCustomEngineForm() {
   // 添加 URL 输入框的实时图标预览
   const urlInput = document.getElementById('custom-engine-url');
   const iconInput = document.getElementById('custom-engine-icon');
-  
+
   urlInput.addEventListener('blur', async () => {
     const url = urlInput.value.trim();
     const nameInput = document.getElementById('custom-engine-name');
     const name = nameInput.value.trim();
-    
+
     if (url && !iconInput.value.trim()) {
       // 显示加载动画
       const loadingIcon = document.createElement('div');
@@ -656,7 +656,7 @@ function initCustomEngineForm() {
 function generateTextIcon(name) {
   // 获取首个有效字符
   let firstChar = name.trim().charAt(0);
-  
+
   // 如果是中文，直接使用
   // 如果是英文，转换为大写
   // 如果有空格，获取第一个单词的首字母
@@ -672,10 +672,10 @@ function generateTextIcon(name) {
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
       <rect width="40" height="40" rx="8" fill="#f0f0f0"/>
-      <text 
-        x="50%" 
-        y="50%" 
-        font-family="Arial, sans-serif" 
+      <text
+        x="50%"
+        y="50%"
+        font-family="Arial, sans-serif"
         font-size="${/^[\u4e00-\u9fa5]/.test(firstChar) ? '18' : '20'}"
         font-weight="bold"
         fill="#666"
@@ -714,7 +714,7 @@ async function getFavicon(url) {
         continue;
       }
     }
-    
+
     // 如果所有图标源都失败，返回文本图标
     return null;
   } catch (e) {
@@ -734,7 +734,7 @@ async function saveCustomEngine(engine) {
     const customEngines = getCustomEngines();
     customEngines.push(engine);
     localStorage.setItem('customSearchEngines', JSON.stringify(customEngines));
-    
+
     // 自动启用新添加的搜索引擎
     SearchEngineManager.addEngine(engine.name);
     // 立即更新下拉菜单
@@ -763,12 +763,12 @@ function deleteCustomEngine(engineId) {
     const customEngines = getCustomEngines();
     const filtered = customEngines.filter(e => e.name !== engineId);
     localStorage.setItem('customSearchEngines', JSON.stringify(filtered));
-    
+
     // 如果该引擎已启用，则从启用列表中移除
     SearchEngineManager.removeEngine(engineId);
     // 立即更新下拉菜单
     createSearchEngineDropdown();
-    
+
     refreshCustomEngines();
   }
 }
@@ -789,7 +789,7 @@ function refreshCustomEngines() {
 
     const checkboxContainer = document.createElement('label');
     checkboxContainer.className = 'custom-checkbox';
-    
+
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
     checkbox.checked = enabledEngineNames.includes(engine.name);
@@ -830,7 +830,7 @@ function refreshCustomEngines() {
     const toggleEngine = (e) => {
       // 获取实际的复选框元素
       const checkbox = e.currentTarget.querySelector('input[type="checkbox"]');
-      
+
       // 排除删除按钮和复选框本身的点击
       if (e.target.closest('.delete-custom-engine') || e.target === checkbox) {
         return;
@@ -838,10 +838,10 @@ function refreshCustomEngines() {
 
       // 切换复选框状态
       checkbox.checked = !checkbox.checked;
-      
+
       // 触发change事件以同步状态
       checkbox.dispatchEvent(new Event('change', { bubbles: true }));
-      
+
       // 更新样式和状态
       e.currentTarget.classList.toggle('selected', checkbox.checked);
       handleEngineToggle(engine, checkbox.checked);
@@ -849,7 +849,7 @@ function refreshCustomEngines() {
 
     // 为整个项目添加点击事件
     engineItem.addEventListener('click', toggleEngine);
-    
+
     // 移除复选框的点击事件阻止
     checkbox.addEventListener('change', (e) => {
       // 直接更新状态
@@ -871,7 +871,7 @@ function initializeSearchEngineDialog() {
         dialog.style.display = 'none';
       });
     }
-    
+
     dialog.addEventListener('click', (e) => {
       if (e.target === dialog) {
         dialog.style.display = 'none';
@@ -908,7 +908,7 @@ function setSearchEngineIcon(engineName) {
 
   const allEngines = SearchEngineManager.getAllEngines();
   const engine = allEngines.find(e => e.name === engineName);
-  
+
   if (engine) {
     searchEngineIcon.src = engine.icon;
     searchEngineIcon.alt = `${getLocalizedMessage(engine.label)} Search`;
@@ -927,11 +927,11 @@ function getSearchEngineIconPath(engineName) {
 }
 
 // 在文件末尾统一导出所有需要的函数和变量
-export { 
-  SearchEngineManager, 
-  updateSearchEngineIcon, 
+export {
+  SearchEngineManager,
+  updateSearchEngineIcon,
   setSearchEngineIcon,
-  createSearchEngineDropdown, 
+  createSearchEngineDropdown,
   initializeSearchEngineDialog,
   getSearchUrl,
   createTemporarySearchTabs,

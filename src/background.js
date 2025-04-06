@@ -1,11 +1,11 @@
 // 当扩展安装或更新时触发
 chrome.runtime.onInstalled.addListener((details) => {
   console.log("Extension installed or updated:", details.reason);
-  
+
   if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
     chrome.tabs.create({ url: "chrome://newtab" });
     chrome.storage.local.set({ defaultBookmarkId: null });
-    chrome.storage.sync.set({ 
+    chrome.storage.sync.set({
       openInNewTab: true, // 默认在新标签页打开
       sidepanelOpenInNewTab: true, // 默认在新标签页打开
       sidepanelOpenInSidepanel: false // 默认不在侧边栏内打开
@@ -15,27 +15,27 @@ chrome.runtime.onInstalled.addListener((details) => {
   // 检查命令是否正确注册
   chrome.commands.getAll((commands) => {
     console.log("Registered commands:", commands);
-    
+
     // 查找侧边栏命令
     const sidePanelCommand = commands.find(cmd => cmd.name === "open_side_panel");
     if (sidePanelCommand) {
       console.log("Side panel command registered with shortcut:", sidePanelCommand.shortcut);
     } else {
       console.warn("Side panel command not found! Available commands:", commands.map(cmd => cmd.name).join(", "));
-      
+
       // 检查是否有其他可能的侧边栏命令
-      const alternativeCommand = commands.find(cmd => 
-        cmd.name === "_execute_action_with_ui" || 
-        cmd.name.includes("side") || 
+      const alternativeCommand = commands.find(cmd =>
+        cmd.name === "_execute_action_with_ui" ||
+        cmd.name.includes("side") ||
         cmd.name.includes("panel")
       );
-      
+
       if (alternativeCommand) {
         console.log("Found alternative command that might be for side panel:", alternativeCommand);
       }
     }
   });
-  
+
   // 注册侧边栏导航内容脚本
   registerSidePanelNavigationScript();
 });
@@ -70,7 +70,7 @@ function createTab(url, options = {}) {
     openingTabs.add(url);
 
     // 创建新标签页
-    chrome.tabs.create({ 
+    chrome.tabs.create({
       url: url,
       active: true,
       ...options
@@ -93,28 +93,28 @@ function createTab(url, options = {}) {
 // 合并所有消息监听逻辑到一个监听器中
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log('Received message in background:', request);
-  
+
   // 处理侧边栏导航消息
   if (request.action === 'navigateHome') {
     const homePath = 'src/sidepanel.html';
-    
+
     // 返回到侧边栏主页
     chrome.sidePanel.setOptions({
       path: homePath
     }).then(() => {
       console.log('Successfully navigated to sidepanel home');
-      
+
       // 获取当前的历史记录状态
       chrome.storage.local.get(['sidePanelHistory', 'sidePanelCurrentIndex'], (result) => {
         let history = result.sidePanelHistory || [];
         let currentIndex = result.sidePanelCurrentIndex || -1;
-        
+
         console.log('Current history before home navigation:', {
           historyLength: history.length,
           currentIndex: currentIndex,
           history: history.length > 0 ? history.map(u => u.substring(0, 30) + '...') : []
         });
-        
+
         // 如果历史记录为空，初始化它
         if (history.length === 0) {
           history = [homePath];
@@ -127,7 +127,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             history = history.slice(0, currentIndex + 1);
             console.log('Home: Truncated forward history from', history.length, 'to', currentIndex + 1);
           }
-          
+
           // 检查历史记录中最后一个条目是否已经是主页
           if (history[history.length - 1] !== homePath) {
             // 添加主页到历史记录末尾
@@ -138,7 +138,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             console.log('Home: Last entry is already the home page, not adding duplicate');
           }
         }
-        
+
         // 更新历史记录
         chrome.storage.local.set({
           sidePanelHistory: history,
@@ -151,7 +151,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             canGoBack: currentIndex > 0,
             canGoForward: currentIndex < history.length - 1
           });
-          
+
           // 通知内容脚本更新导航状态
           if (sender.tab && sender.tab.id) {
             try {
@@ -167,8 +167,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               console.error('Error sending message to tab:', error);
             }
           }
-          
-          sendResponse({ 
+
+          sendResponse({
             success: true,
             canGoBack: currentIndex > 0,
             canGoForward: currentIndex < history.length - 1
@@ -181,7 +181,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
     return true; // 保持消息通道开放以进行异步响应
   }
-  
+
   if (request.action === 'navigateBack' || request.action === 'navigateForward') {
     // 获取历史记录状态
     chrome.storage.local.get(['sidePanelHistory', 'sidePanelCurrentIndex'], (result) => {
@@ -190,10 +190,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         sendResponse({ success: false, error: 'No history state found' });
         return;
       }
-      
+
       const history = result.sidePanelHistory;
       let currentIndex = result.sidePanelCurrentIndex;
-      
+
       console.log('Current navigation state before operation:', {
         action: request.action,
         historyLength: history.length,
@@ -202,7 +202,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         canGoForward: currentIndex < history.length - 1,
         history: history.map(u => u.substring(0, 30) + '...')
       });
-      
+
       // 根据导航方向更新索引
       if (request.action === 'navigateBack' && currentIndex > 0) {
         currentIndex--;
@@ -210,8 +210,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         currentIndex++;
       } else {
         console.log('Cannot navigate in requested direction');
-        sendResponse({ 
-          success: false, 
+        sendResponse({
+          success: false,
           error: 'Cannot navigate in requested direction',
           canGoBack: currentIndex > 0,
           canGoForward: currentIndex < history.length - 1,
@@ -220,10 +220,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
         return;
       }
-      
+
       const targetUrl = history[currentIndex];
       console.log(`Navigating ${request.action === 'navigateBack' ? 'back' : 'forward'} to:`, targetUrl, 'Index:', currentIndex);
-      
+
       // 更新存储中的当前索引
       chrome.storage.local.set({ sidePanelCurrentIndex: currentIndex }, () => {
         // 更新侧边栏URL
@@ -237,7 +237,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             canGoBack: currentIndex > 0,
             canGoForward: currentIndex < history.length - 1
           });
-          
+
           // 通知内容脚本更新导航状态
           if (sender.tab && sender.tab.id) {
             try {
@@ -253,8 +253,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               console.log('Error sending message to tab:', err);
             }
           }
-          
-          sendResponse({ 
+
+          sendResponse({
             success: true,
             currentIndex: currentIndex,
             canGoBack: currentIndex > 0,
@@ -268,10 +268,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
       });
     });
-    
+
     return true; // 保持消息通道开放以进行异步响应
   }
-  
+
   // 处理获取导航状态的请求
   if (request.action === 'getNavigationState') {
     // 获取历史记录状态
@@ -281,13 +281,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         // 初始化历史记录
         const initialHistory = ['src/sidepanel.html'];
         const initialIndex = 0;
-        
+
         chrome.storage.local.set({
           sidePanelHistory: initialHistory,
           sidePanelCurrentIndex: initialIndex
         }, () => {
-          sendResponse({ 
-            success: true, 
+          sendResponse({
+            success: true,
             canGoBack: false,
             canGoForward: false,
             initialized: true,
@@ -297,13 +297,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
         return;
       }
-      
+
       const history = result.sidePanelHistory;
       const currentIndex = result.sidePanelCurrentIndex;
       const url = request.url || (history[currentIndex] || '');
       const canGoBack = currentIndex > 0;
       const canGoForward = currentIndex < history.length - 1;
-      
+
       console.log('Navigation state requested:', {
         historyLength: history.length,
         currentIndex: currentIndex,
@@ -311,7 +311,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         canGoForward: canGoForward,
         history: history.map(u => u.substring(0, 30) + '...')
       });
-      
+
       // 通知内容脚本更新导航状态
       if (sender.tab && sender.tab.id) {
         try {
@@ -329,8 +329,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           console.error('Error sending message to tab:', err);
         }
       }
-      
-      sendResponse({ 
+
+      sendResponse({
         success: true,
         currentIndex: currentIndex,
         canGoBack: canGoBack,
@@ -339,27 +339,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         historyLength: history.length
       });
     });
-    
+
     return true; // 保持消息通道开放以进行异步响应
   }
-  
+
   // 处理侧边栏内部链接点击并记录到历史
   if (request.action === 'recordAndNavigate') {
     const url = request.url;
     console.log('Recording and navigating to URL in side panel:', url);
-    
+
     // 获取当前历史记录状态
     chrome.storage.local.get(['sidePanelHistory', 'sidePanelCurrentIndex'], (result) => {
       let history = result.sidePanelHistory || [];
       let currentIndex = result.sidePanelCurrentIndex || -1;
-      
+
       // 记录当前状态用于调试
       console.log('Before update - History state:', {
         historyLength: history.length,
         currentIndex: currentIndex,
         history: history.length > 0 ? history.map(u => u.substring(0, 30) + '...') : []
       });
-      
+
       // 处理初始情况
       if (history.length === 0) {
         // 如果历史记录为空，先添加一个主页记录
@@ -367,7 +367,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         currentIndex = 0;
         console.log('Initialized empty history with homepage');
       }
-      
+
       // 计算新的索引位置
       if (currentIndex < history.length - 1) {
         // 如果在历史记录中间导航，则需要截断历史记录
@@ -379,16 +379,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         currentIndex++;
         console.log(`Adding to end of history: new currentIndex = ${currentIndex}`);
       }
-      
+
       // 添加新URL到历史记录
       history.push(url);
-      
+
       console.log('Updated history state:', {
         historyLength: history.length,
         currentIndex: currentIndex,
         history: history.map(u => u.substring(0, 30) + '...') // 日志中只显示URL的前30个字符
       });
-      
+
       // 更新存储中的历史记录状态
       chrome.storage.local.set({
         sidePanelHistory: history,
@@ -401,7 +401,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             currentIndex: verifyResult.sidePanelCurrentIndex,
             history: verifyResult.sidePanelHistory.map(u => u.substring(0, 30) + '...')
           });
-          
+
           // 使用Chrome侧边栏API更新URL
           chrome.sidePanel.setOptions({
             path: url
@@ -413,7 +413,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               canGoBack: currentIndex > 0,
               canGoForward: currentIndex < history.length - 1
             });
-            
+
             // 通知内容脚本更新导航状态
             if (sender.tab && sender.tab.id) {
               try {
@@ -429,8 +429,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 console.error('Error sending message to tab:', error);
               }
             }
-            
-            sendResponse({ 
+
+            sendResponse({
               success: true,
               currentIndex: currentIndex,
               canGoBack: currentIndex > 0,
@@ -444,29 +444,29 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         });
       });
     });
-    
+
     return true; // 保持消息通道开放以进行异步响应
   }
-  
+
   // 处理从侧边栏打开URL的请求
   if (request.action === 'openUrlInSidePanel') {
     const url = request.url;
     console.log('Opening URL in side panel:', url);
-    
+
     // 检查是否需要更新历史记录
     if (request.updateHistory !== false) {
       // 获取当前历史记录状态
       chrome.storage.local.get(['sidePanelHistory', 'sidePanelCurrentIndex'], (result) => {
         let history = result.sidePanelHistory || [];
         let currentIndex = result.sidePanelCurrentIndex || -1;
-        
+
         // 记录当前状态用于调试
         console.log('Before update (direct URL) - History state:', {
           historyLength: history.length,
           currentIndex: currentIndex,
           history: history.length > 0 ? history.map(u => u.substring(0, 30) + '...') : []
         });
-        
+
         // 处理初始情况
         if (history.length === 0) {
           // 如果历史记录为空，添加主页作为第一个条目
@@ -474,7 +474,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           currentIndex = 0;
           console.log('Direct URL: Initialized empty history with homepage');
         }
-        
+
         // 计算新的索引位置
         if (currentIndex < history.length - 1) {
           // 如果在历史记录中间导航，则需要截断历史记录
@@ -486,16 +486,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           currentIndex++;
           console.log(`Direct URL: Adding to end of history: new currentIndex = ${currentIndex}`);
         }
-        
+
         // 添加新URL到历史记录
         history.push(url);
-        
+
         console.log('Updated history state for direct URL open:', {
           historyLength: history.length,
           currentIndex: currentIndex,
           history: history.map(u => u.substring(0, 30) + '...') // 日志中只显示URL的前30个字符
         });
-        
+
         // 更新存储中的历史记录状态
         chrome.storage.local.set({
           sidePanelHistory: history,
@@ -508,7 +508,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               currentIndex: verifyResult.sidePanelCurrentIndex,
               history: verifyResult.sidePanelHistory.map(u => u.substring(0, 30) + '...')
             });
-            
+
             // 使用Chrome侧边栏API更新URL
             navigateToUrl(url, sender, sendResponse, request.isNavigating);
           });
@@ -518,14 +518,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       // 不更新历史记录，直接导航
       navigateToUrl(url, sender, sendResponse, request.isNavigating);
     }
-    
+
     return true; // 保持消息通道开放以进行异步响应
   }
-  
+
   // 辅助函数：使用Chrome侧边栏API导航到URL
   function navigateToUrl(url, sender, sendResponse, isNavigating = false) {
     console.log('Navigating to URL in side panel:', url, 'Is navigating:', isNavigating);
-    
+
     // 向当前标签发送消息，表明即将在侧边栏打开页面
     if (!isNavigating) {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -553,33 +553,33 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         }
       });
     }
-    
+
     // 确保URL包含sidepanel_view标记，除非是侧边栏主页
     if (!url.includes('sidepanel.html') && !url.includes('sidepanel_view=')) {
       url = url + (url.includes('?') ? '&' : '?') + 'sidepanel_view=true';
       console.log('Added sidepanel_view parameter to URL:', url);
     }
-    
+
     // 首先将状态保存到Chrome存储中
-    chrome.storage.session.set({ 
+    chrome.storage.session.set({
       'sidepanel_view': true,
       'sidepanel_last_url': url,
       'sidepanel_timestamp': Date.now()
     }, () => {
       console.log('已保存侧边栏状态到chrome.storage.session');
     });
-    
+
     chrome.sidePanel.setOptions({
       path: url
     }).then(() => {
       console.log('Successfully opened URL in side panel:', url);
-      
+
       // 获取最新的历史状态以更新导航按钮
       chrome.storage.local.get(['sidePanelHistory', 'sidePanelCurrentIndex'], (result) => {
         if (result.sidePanelHistory && result.sidePanelCurrentIndex !== undefined) {
           const history = result.sidePanelHistory;
           const currentIndex = result.sidePanelCurrentIndex;
-          
+
           console.log('Current history state after navigation:', {
             historyLength: history.length,
             currentIndex: currentIndex,
@@ -587,7 +587,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             canGoForward: currentIndex < history.length - 1,
             history: history.map(u => u.substring(0, 30) + '...')
           });
-          
+
           // 通知内容脚本更新导航状态 - 添加错误处理
           if (sender && sender.tab && sender.tab.id) {
             try {
@@ -606,8 +606,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               console.error('Error sending navigation update:', e);
             }
           }
-          
-          // 在页面加载后向其发送侧边栏状态标记 
+
+          // 在页面加载后向其发送侧边栏状态标记
           setTimeout(() => {
             // 获取当前侧边栏打开的标签页
             chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -639,7 +639,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             });
           }, 1500); // 更长的延迟以确保页面已加载
         }
-        
+
         if (sendResponse) {
           sendResponse({ success: true });
         }
@@ -651,7 +651,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
     });
   }
-  
+
   switch (request.action) {
     case 'fetchBookmarks':
       chrome.bookmarks.getTree(async (bookmarkTreeNodes) => {
@@ -664,9 +664,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 resolve(tree);
               });
             });
-            
+
             const processedBookmarks = [];
-            
+
             function processBookmarkNode(node) {
               if (node.url) {
                 processedBookmarks.push(node);
@@ -675,15 +675,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 node.children.forEach(processBookmarkNode);
               }
             }
-            
+
             folders.forEach(folder => {
               processBookmarkNode(folder);
             });
-            
-            sendResponse({ 
+
+            sendResponse({
               bookmarks: bookmarkTreeNodes,
               processedBookmarks: processedBookmarks,
-              success: true 
+              success: true
             });
           } catch (error) {
             sendResponse({ error: error.message });
@@ -732,30 +732,30 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       toggleSidePanel();
       sendResponse({ success: true });
       return true;
-      
+
     case 'updateSidePanelHistory':
       // 处理来自侧边栏内部导航的历史更新请求
       console.log('Handling updateSidePanelHistory:', request.url, 'source:', request.source);
-      
+
       // 获取当前历史记录状态
       chrome.storage.local.get(['sidePanelHistory', 'sidePanelCurrentIndex'], (result) => {
         let history = result.sidePanelHistory || [];
         let currentIndex = result.sidePanelCurrentIndex || -1;
-        
+
         // 记录当前状态用于调试
         console.log('Before in-page navigation update - History state:', {
           historyLength: history.length,
           currentIndex: currentIndex,
           history: history.length > 0 ? history.map(u => u.substring(0, 30) + '...') : []
         });
-        
+
         // 处理初始情况
         if (history.length === 0) {
           // 如果历史记录为空，添加主页作为第一个条目
           history.push('src/sidepanel.html');
           currentIndex = 0;
         }
-        
+
         // 计算新的索引位置
         if (currentIndex < history.length - 1) {
           // 如果在历史记录中间导航，则需要截断历史记录
@@ -765,22 +765,22 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           // 正常添加到历史记录末尾
           currentIndex++;
         }
-        
+
         // 添加新URL到历史记录
         history.push(request.url);
-        
+
         // 计算可以前进和后退的能力
         const canGoBack = currentIndex > 0;
         const canGoForward = currentIndex < history.length - 1;
-        
+
         console.log('Updated history state for in-page navigation:', {
           historyLength: history.length,
           currentIndex: currentIndex,
           canGoBack: canGoBack,
           canGoForward: canGoForward,
-          history: history.map(u => u.substring(0, 30) + '...') 
+          history: history.map(u => u.substring(0, 30) + '...')
         });
-        
+
         // 更新存储中的历史记录状态
         chrome.storage.local.set({
           sidePanelHistory: history,
@@ -791,7 +791,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             if (tabs && tabs.length > 0) {
               // 使用sendMessage的回调函数处理错误，而不是使用try-catch
               chrome.tabs.sendMessage(
-                tabs[0].id, 
+                tabs[0].id,
                 {
                   action: 'updateNavigationState',
                   canGoBack: canGoBack,
@@ -811,7 +811,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
               );
             }
           });
-          
+
           if (sendResponse) {
             sendResponse({
               success: true,
@@ -837,9 +837,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       // 添加到正在打开的集合中
       openingTabs.add(request.url);
 
-      chrome.tabs.create({ 
+      chrome.tabs.create({
         url: request.url,
-        active: true 
+        active: true
       }, (tab) => {
         if (chrome.runtime.lastError) {
           console.error('Failed to create tab:', chrome.runtime.lastError);
@@ -875,36 +875,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case 'getBookmarkFolder':
       chrome.bookmarks.get(request.folderId, (folder) => {
         if (chrome.runtime.lastError) {
-          sendResponse({ 
-            success: false, 
-            error: chrome.runtime.lastError.message 
+          sendResponse({
+            success: false,
+            error: chrome.runtime.lastError.message
           });
           return;
         }
-        
+
         // 如果是文件夹，获取其子项
         if (!folder[0].url) {
           chrome.bookmarks.getChildren(request.folderId, (children) => {
             if (chrome.runtime.lastError) {
-              sendResponse({ 
-                success: true, 
+              sendResponse({
+                success: true,
                 folder: folder[0],
-                error: chrome.runtime.lastError.message 
+                error: chrome.runtime.lastError.message
               });
             } else {
-              sendResponse({ 
-                success: true, 
+              sendResponse({
+                success: true,
                 folder: folder[0],
-                children: children 
+                children: children
               });
             }
           });
           return true; // 保持消息通道开放以进行异步响应
         } else {
           // 如果是书签，直接返回
-          sendResponse({ 
-            success: true, 
-            folder: folder[0] 
+          sendResponse({
+            success: true,
+            folder: folder[0]
           });
         }
       });
@@ -992,14 +992,14 @@ function toggleSidePanel() {
       enabled: true,
       path: 'src/sidepanel.html'
     });
-    
+
     // 打开侧边栏
     chrome.sidePanel.open({
       tabId: tabId
     }).then(() => {
       console.log("Side panel opened successfully");
       sidePanelState.isOpen = true;
-      
+
       // 将侧边栏状态保存到storage中，使其在不同页面间共享
       chrome.storage.session.set({ 'sidepanel_active': true }, () => {
         if (chrome.runtime.lastError) {
@@ -1008,7 +1008,7 @@ function toggleSidePanel() {
           console.log('侧边栏状态已保存到session storage');
         }
       });
-      
+
       // 设置延迟，等待侧边栏加载完成后发送消息
       setTimeout(() => {
         try {
@@ -1038,7 +1038,7 @@ function toggleSidePanel() {
 // 修改命令监听器使用切换功能
 chrome.commands.onCommand.addListener((command) => {
   console.log(`Command received: ${command}`);
-  
+
   if (command === "open_side_panel") {
     console.log("Toggling side panel with shortcut");
     toggleSidePanel();

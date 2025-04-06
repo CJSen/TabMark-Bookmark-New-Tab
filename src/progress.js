@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const yearTextSpan = yearProgressElement.querySelector('span');
             const activeSegments = progressBar.querySelectorAll('.active');
             const inactiveSegments = progressBar.querySelectorAll('div:not(.active)');
-            
+
             const backgroundImage = document.body.style.backgroundImage;
             if (!backgroundImage) return;
 
@@ -70,8 +70,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
                     const brightness = (r * 0.299 + g * 0.587 + b * 0.114);
 
-                    yearTextSpan.style.color = brightness > 128 ? 
-                        `rgba(${Math.max(0, r - 160)}, ${Math.max(0, g - 160)}, ${Math.max(0, b - 160)}, 0.75)` : 
+                    yearTextSpan.style.color = brightness > 128 ?
+                        `rgba(${Math.max(0, r - 160)}, ${Math.max(0, g - 160)}, ${Math.max(0, b - 160)}, 0.75)` :
                         `rgba(${Math.min(255, (255 - r) + 80)}, ${Math.min(255, (255 - g) + 80)}, ${Math.min(255, (255 - b) + 80)}, 0.75)`;
                     yearTextSpan.style.textShadow = 'none';
                     yearTextSpan.style.transition = 'color 0.3s ease';
@@ -117,8 +117,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
-            if (mutation.type === 'attributes' && 
-                mutation.attributeName === 'style' && 
+            if (mutation.type === 'attributes' &&
+                mutation.attributeName === 'style' &&
                 mutation.target === document.body) {
                 updateColors();
             }
