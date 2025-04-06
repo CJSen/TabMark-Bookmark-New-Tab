@@ -1835,7 +1835,7 @@ function createBookmarkCard(bookmark, index) {
 
   const img = document.createElement('img');
   img.className = 'w-6 h-6 mr-2';
-  img.src = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(bookmark.url)}&size=32`;
+  img.src = `chrome-extension://${chrome.runtime.id}/_favicon/?pageUrl=${encodeURIComponent(bookmark.url)}&size=40`;
 
   // 尝试从缓存获取颜色
   const cachedColors = localStorage.getItem(`bookmark-colors-${bookmark.id}`);
