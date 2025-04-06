@@ -3836,3 +3836,81 @@ input:checked+.slider:before {
   animation: bounce 2s infinite;
 }
 
+/* 添加书签分组样式 */
+.bookmarks-group {
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.bookmarks-group .group-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #717882;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.bookmarks-group .group-cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+}
+
+/* 响应式布局调整 */
+@media (max-width: 1024px) {
+  .bookmarks-group .group-cards {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+    gap: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .bookmarks-group .group-cards {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 0.75rem;
+  }
+
+  .bookmarks-group .group-title {
+    font-size: 13px;
+    margin-bottom: 0.75rem;
+  }
+}
+
+/* 暗色模式适配 */
+[data-theme="dark"] .bookmarks-group .group-title {
+  color: #9ca3af;
+  border-bottom-color: #374151;
+}
+
+/* 文件夹分组标题样式 */
+.folder-group-title {
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  color: #717882;
+  margin: 2rem 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+  grid-column: 1 / -1;  /* 确保标题占据整行 */
+  /* background-color: rgb(238, 238, 238); */
+}
+
+/* 第一个分组标题的特殊处理 */
+.folder-group-title:first-child {
+  margin-top: 0;
+}
+
+/* 暗色模式适配 */
+[data-theme="dark"] .folder-group-title {
+  color: #9ca3af;
+  border-bottom-color: #374151;
+}
+
+@media (max-width: 640px) {
+  .folder-group-title {
+    font-size: 13px;
+    margin: 1.5rem 0 0.75rem 0;
+  }
+}
+

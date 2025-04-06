@@ -1741,17 +1741,22 @@ function displayBookmarks(bookmark) {
   const fragment = document.createDocumentFragment();
 
   let itemsToDisplay = bookmark.children || [];
-
   itemsToDisplay.sort((a, b) => a.index - b.index);
 
   itemsToDisplay.forEach((child) => {
-    if (child.url) {
-      const card = createBookmarkCard(child, child.index);
-      fragment.appendChild(card);
-    } else {
-      const folderCard = createFolderCard(child, child.index);
-      fragment.appendChild(folderCard);
+    // 检查是否是分组文件夹（空文件夹且名称以 -group 结尾）
+    if (!child.url && (!child.children || child.children.length === 0) && child.title.endsWith('-group')) {
+      // 创建分组标题
+      const groupTitle = document.createElement('div');
+      groupTitle.className = 'folder-group-title';
+      groupTitle.textContent = child.title.replace(/-group$/, ''); // 移除 -group 后缀
+      fragment.appendChild(groupTitle);
+      return;
     }
+
+    // 创建普通的书签卡片或文件夹卡片
+    const card = child.url ? createBookmarkCard(child, child.index) : createFolderCard(child, child.index);
+    fragment.appendChild(card);
   });
 
   bookmarksList.innerHTML = '';
