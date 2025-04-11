@@ -30,6 +30,8 @@ TabMark 将收藏夹变成新标签页，让你收藏的书签一目了然、整
 
 **浏览器功能快捷方式**：展示浏览器历史记录、下载、密码管理、拓展管理的快捷链接；
 
+**分组功能**：使用'***-group'命名的空文件夹作为分组分割和分组名；
+
 
 ### 使用教程
 https://cooing-loganberry-b74.notion.site/TabMark-Bookmark-New-Tab-7a083a74f84e4bb48345e389c1e53717
