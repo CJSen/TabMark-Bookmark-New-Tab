@@ -3323,10 +3323,19 @@ async function createMenuItems(menu) {
       icon: isDefault ? 'keep_off' : 'keep',
       action: async () => {
         const folder = currentBookmarkFolder;
+        
+        // 在action执行时重新获取最新的isDefault状态
+        let currentIsDefault = false;
+        if (folder?.dataset?.id) {
+          const data = await chrome.storage.sync.get('defaultFolders');
+          const defaultFolders = data.defaultFolders?.items || [];
+          currentIsDefault = defaultFolders.some(f => f.id === folder.dataset.id);
+        }
+        
         console.log('Toggle default folder action triggered:', {
           folder: folder,
           folderId: folder?.dataset?.id,
-          currentIsDefault: isDefault
+          currentIsDefault: currentIsDefault
         });
 
         if (!folder?.dataset?.id) {
@@ -3342,7 +3351,7 @@ async function createMenuItems(menu) {
         const newIsDefault = defaultFolders.some(f => f.id === folder.dataset.id);
 
         console.log('Menu item status update:', {
-          oldState: isDefault,
+          oldState: currentIsDefault,
           newState: newIsDefault,
           folderId: folder.dataset.id,
           defaultFolders: defaultFolders
@@ -6066,6 +6075,7 @@ document.addEventListener('DOMContentLoaded', function() {
   async function toggleDefaultFolder(folder) {
     if (!folder?.dataset?.id) {
       console.error('Invalid folder object:', folder);
+      showToast('错误: 无效的文件夹');
       return;
     }
 
@@ -6088,6 +6098,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (!folderName) {
         console.error('Could not find folder name');
+        showToast('错误: 无法获取文件夹名称');
         return;
     }
 
@@ -6102,27 +6113,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 ...f,
                 order: index
             }));
+            console.log('Removing folder from default folders:', {
+              folderId,
+              folderName,
+              newDefaultFolders: defaultFolders
+            });
             showToast(chrome.i18n.getMessage("removedFromDefaultFolders", [folderName]));
         } else {
             if (defaultFolders.length >= 8) {
                 showToast(chrome.i18n.getMessage("maxDefaultFoldersReached"));
                 return;
             }
-            defaultFolders.push({
+            const newFolder = {
                 id: folderId,
                 name: folderName,
                 order: defaultFolders.length
+            };
+            defaultFolders.push(newFolder);
+            console.log('Adding folder to default folders:', {
+              folderId,
+              folderName,
+              newFolder,
+              newDefaultFolders: defaultFolders
             });
             showToast(chrome.i18n.getMessage("addedToDefaultFolders", [folderName]));
         }
 
-        await chrome.storage.sync.set({
+        // 保存到存储
+        const storageData = {
             defaultFolders: {
                 items: defaultFolders,
                 lastUpdated: Date.now()
             }
+        };
+        
+        console.log('Saving to storage:', storageData);
+        
+        await new Promise((resolve, reject) => {
+          chrome.storage.sync.set(storageData, () => {
+            if (chrome.runtime.lastError) {
+              console.error('Storage save error:', chrome.runtime.lastError);
+              reject(chrome.runtime.lastError);
+            } else {
+              console.log('Storage saved successfully');
+              resolve();
+            }
+          });
         });
 
+        console.log('Storage sync successful, updating UI...');
+        
         // 立即更新UI
         await initDefaultFoldersTabs();
 
@@ -6135,6 +6175,8 @@ document.addEventListener('DOMContentLoaded', function() {
         document.dispatchEvent(new CustomEvent('defaultFoldersChanged', {
             detail: { folders: defaultFolders }
         }));
+        
+        console.log('Toggle default folder completed successfully');
 
     } catch (error) {
         console.error('Error toggling default folder:', error);
@@ -6188,7 +6230,8 @@ function updateDefaultFoldersTabsVisibility() {
 
   // 检查标签数量
   const folderTabs = tabsContainer.querySelectorAll('.folder-tab');
-  defaultFoldersTabs.classList.toggle('show', folderTabs.length > 1);
+  // 修复: 当有至少1个标签页时就显示，而不是需要2个以上
+  defaultFoldersTabs.classList.toggle('show', folderTabs.length > 0);
 
   // 处理侧边栏状态
   if (sidebarContainer) {

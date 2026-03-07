@@ -1923,9 +1923,9 @@ body .default-folders-tabs.sidebar-expanded {
   100% { opacity: 0; }
 }
 
-/* 移除之前的重复样式 */
+/* 修复: active标签页始终显示文本 */
 .folder-tab.active::after {
-  opacity: 0;
+  opacity: 1;
 }
 
 /* 切换时的动画效果 */
